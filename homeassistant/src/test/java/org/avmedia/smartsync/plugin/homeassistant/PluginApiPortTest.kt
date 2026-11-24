@@ -85,6 +85,7 @@ class PluginApiPortTest {
         val link = FakeLink()
         val plugin = HomeAssistantPlugin({ link }, {})
         plugin.activate(host)
+        link.listener!!.onConnected()
         // The first publish runs on the plugin's own scope after the connection.
         val until = System.currentTimeMillis() + 10_000
         while (link.published.count { it.topic.contains(node) } < 30 && System.currentTimeMillis() < until) Thread.sleep(20)
