@@ -57,7 +57,7 @@ jobs:
       - name: TRMNL payload size of a full day
         if: always()
         run: |
-          f=trmnl/build/test-results/testDebugUnitTest/TEST-org.avmedia.smartsync.plugin.trmnl.PayloadTest.xml
+          f=plugins/trmnl/build/test-results/testDebugUnitTest/TEST-org.avmedia.smartsync.plugin.trmnl.PayloadTest.xml
           [ -f "$f" ] && grep -o 'full day request: [0-9]* bytes' "$f" || true
 
       - name: Upload test reports
@@ -68,10 +68,14 @@ jobs:
           path: |
             */build/reports/
             */build/test-results/
+            plugins/*/build/reports/
+            plugins/*/build/test-results/
           if-no-files-found: ignore
 
       - name: Upload the plugin libraries
         uses: actions/upload-artifact@v4
         with:
           name: plugins-aar
-          path: "*/build/outputs/aar/*-release.aar"
+          path: |
+            */build/outputs/aar/*-release.aar
+            plugins/*/build/outputs/aar/*-release.aar

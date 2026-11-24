@@ -11,13 +11,14 @@ shows that to the person and keeps the plugin to it.
 | Module | What it is | Version |
 |---|---|---|
 | [`plugin-api`](plugin-api/) | The interface between the app and its plugins | 0.1.0 (`plugin-api-v0.1.0`) |
-| [`homeassistant`](homeassistant/) | The watch in Home Assistant through MQTT discovery: values, controls, history | 0.1.0 (`homeassistant-v0.1.0`) |
-| [`healthconnect`](healthconnect/) | Steps, heart rate, sleep and workouts to Android Health Connect | 0.1.0 (`healthconnect-v0.1.0`) |
-| [`trmnl`](trmnl/) | The watch's values to a TRMNL private plugin (webhook) | 0.1.0 (`trmnl-v0.1.0`) |
+| [`homeassistant`](plugins/homeassistant/) | The watch in Home Assistant through MQTT discovery: values, controls, history | 0.1.0 (`homeassistant-v0.1.0`) |
+| [`healthconnect`](plugins/healthconnect/) | Steps, heart rate, sleep and workouts to Android Health Connect | 0.1.0 (`healthconnect-v0.1.0`) |
+| [`trmnl`](plugins/trmnl/) | The watch's values to a TRMNL private plugin (webhook) | 0.1.0 (`trmnl-v0.1.0`) |
+| [`tasker`](plugins/tasker/) | Watch events and states, and watch actions, for Tasker profiles and tasks | 0.1.0 (`tasker-v0.1.0`) |
 
 ## Writing a plugin
-1. A new module `<name>/` (Android library), with `compileOnly(project(':plugin-api'))` and
-   `testImplementation(project(':plugin-api'))`, included in `settings.gradle`.
+1. A new module `plugins/<name>/` (Android library), with `compileOnly(project(':plugin-api'))` and
+   `testImplementation(project(':plugin-api'))`, added to the plugin list in `settings.gradle`.
 2. A class implementing `WatchPlugin` with a public constructor without arguments, named in
    `src/main/resources/META-INF/services/org.avmedia.smartsync.plugin.api.WatchPlugin`.
 3. Declare `access` (what it reads, controls, sends and keeps) and, in `activate`, its needs (`PluginHost.declareNeeds`).

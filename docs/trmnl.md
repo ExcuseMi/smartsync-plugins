@@ -1,7 +1,7 @@
 # TRMNL plugin
 
 Pushes each watch's steps, heart rate, battery and more to a TRMNL private plugin (webhook), so a TRMNL e-paper display
-shows the watch without Home Assistant. Details, limits and payload: [trmnl/README.md](../trmnl/README.md).
+shows the watch without Home Assistant. Details, limits and payload: [trmnl/README.md](../plugins/trmnl/README.md).
 
 ## Setup
 1. On TRMNL: create a private plugin with the strategy "Webhook" and copy its Webhook URL.

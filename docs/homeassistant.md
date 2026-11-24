@@ -2,7 +2,7 @@
 
 Each watch becomes a device in Home Assistant: battery, steps, heart rate, sleep and workouts as sensors, the watch's
 settings as controls, notifications to the watch, the watch button as a trigger, and hourly history in Home
-Assistant's long-term statistics. It uses MQTT discovery. Full reference: [homeassistant/README.md](../homeassistant/README.md).
+Assistant's long-term statistics. It uses MQTT discovery. Full reference: [homeassistant/README.md](../plugins/homeassistant/README.md).
 
 ## Setup
 1. In Home Assistant: an MQTT broker (the Mosquitto add-on, or Mosquitto next to Home Assistant) and the

@@ -1,6 +1,4 @@
 # Every module has an owner who reviews its changes.
 /plugin-api/ @ExcuseMi
-/homeassistant/ @ExcuseMi
-/healthconnect/ @ExcuseMi
-/trmnl/ @ExcuseMi
+/plugins/ @ExcuseMi
 /.github/ @ExcuseMi

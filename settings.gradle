@@ -19,7 +19,8 @@ rootProject.name = "smartsync-plugins"
 
 // The plugin interface, and every plugin built against it as a project module (no vendored copy).
 include ':plugin-api'
-include ':homeassistant'
-include ':healthconnect'
-include ':trmnl'
-include ':tasker'
+// Plugins live under plugins/; the project names (and so the JitPack artifact ids) stay the same.
+for (name in ['homeassistant', 'healthconnect', 'trmnl', 'tasker']) {
+    include ":$name"
+    project(":$name").projectDir = new File(settingsDir, "plugins/$name")
+}

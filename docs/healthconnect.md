@@ -1,7 +1,7 @@
 # Health Connect plugin
 
 Writes the watch's steps, heart rate, sleep, blood oxygen and workouts to Android Health Connect, so apps such as
-Google Fit can show them. It only writes; it never reads Health Connect. Details: [healthconnect/README.md](../healthconnect/README.md).
+Google Fit can show them. It only writes; it never reads Health Connect. Details: [healthconnect/README.md](../plugins/healthconnect/README.md).
 
 ## Setup
 1. A watch with a health log (the GBX-H5600 family).
