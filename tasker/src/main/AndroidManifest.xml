@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        The Locale plugin contract that Tasker, MacroDroid and Automate speak. Exported because those apps start the
+        screens and send the broadcasts; an action runs only while the plugin is on in Smart Sync.
+    -->
+    <application>
+        <activity
+            android:name="org.avmedia.smartsync.plugin.tasker.EditEventActivity"
+            android:exported="true"
+            android:label="@string/tasker_event_label">
+            <intent-filter>
+                <action android:name="net.dinglisch.android.tasker.ACTION_EDIT_EVENT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.avmedia.smartsync.plugin.tasker.EditStateActivity"
+            android:exported="true"
+            android:label="@string/tasker_state_label">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_CONDITION" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="org.avmedia.smartsync.plugin.tasker.EditActionActivity"
+            android:exported="true"
+            android:label="@string/tasker_action_label">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="org.avmedia.smartsync.plugin.tasker.FireReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="org.avmedia.smartsync.plugin.tasker.QueryReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.QUERY_CONDITION" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
