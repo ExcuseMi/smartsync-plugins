@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tasker_event_label">Smart Sync watch event</string>
+    <string name="tasker_state_label">Smart Sync watch state</string>
+    <string name="tasker_action_label">Smart Sync watch action</string>
+</resources>
