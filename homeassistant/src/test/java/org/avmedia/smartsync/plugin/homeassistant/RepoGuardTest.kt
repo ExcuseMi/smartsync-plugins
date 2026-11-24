@@ -58,7 +58,9 @@ class RepoGuardTest {
             RegexOption.IGNORE_CASE,
         )
         val ext = setOf("kt", "kts", "java", "md", "yml", "yaml", "gradle", "txt", "json", "xml", "properties", "pro", "toml")
-        val self = File(module, "src/test/java/org/avmedia/smartsync/plugin/mqtt/RepoGuardTest.kt").canonicalFile
+        // From the class, so a renamed package cannot make the guard scan (and refuse) its own patterns.
+        val self = File(module, "src/test/java/" + RepoGuardTest::class.java.name.replace('.', '/') + ".kt").canonicalFile
+        assertTrue("guard file not found: $self", self.isFile)
         val files = repo.walkTopDown()
             .onEnter { it.name !in setOf(".git", "build", ".gradle", "vendor", ".kotlin") }
             .filter { it.isFile && it.extension in ext && it.canonicalFile != self }.toList()
