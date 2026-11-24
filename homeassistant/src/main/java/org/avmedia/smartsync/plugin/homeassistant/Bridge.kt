@@ -226,7 +226,7 @@ class Bridge(
     internal fun states(w: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
         val out = LinkedHashMap<String, String>()
         for (e in Entities.valuesFor(w.capabilities)) {
-            val v: Any? = if (e.key == "watch.connected") connectedNow[w.id] ?: w.connected else values[e.key]
+            val v: Any? = if (e.key == "watch.connected") connectedNow[w.id] ?: w.connected else Entities.convert(e, values[e.key], zone())
             Values.format(v)?.let { out[topics.state(w.id, e.obj)] = it }
         }
         val settings = host.settings(w.id).values

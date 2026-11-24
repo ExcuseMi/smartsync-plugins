@@ -158,9 +158,16 @@ History topics keep the last 7 days; a day is published again only when it chang
 - Home Assistant restarted: it says so on `homeassistant/status` and the plugin publishes discovery and states again.
 
 ## Moving from the mobile app integration
-This plugin creates its own device per watch, with entity ids from the watch's name (for example
-`sensor.casio_gbx_h5600_battery`), so nothing clashes with the entities of the mobile app integration. Move your
-automations and dashboards to the new entities, then remove the old mobile app device.
+The sensors ask for the entity ids the app's mobile app integration used (`default_entity_id`, for example
+`sensor.casio_gbx_h5600_steps_today`, `binary_sensor.casio_gbx_h5600_watch_connected`), with the same unit and state
+class, so dashboards, automations and long-term statistics carry on. Home Assistant gives an id only when the entity
+is first discovered, and adds `_2` while the old one still exists, so the order matters:
+1. Turn off the in-app Home Assistant integration and delete its mobile app device in Home Assistant.
+2. Turn on this plugin. Its entities take the old ids.
+
+Not carried over: the old read-only settings sensors (watch face, bedtime, smart alarm, heart rate measurement,
+custom face slot, watch settings) are now controls (select, switch, number, text) with new ids; the raw diagnostic
+sensors and the old device tracker and notify entities have no counterpart (use the notify entity of this device).
 
 ## Building
 A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
