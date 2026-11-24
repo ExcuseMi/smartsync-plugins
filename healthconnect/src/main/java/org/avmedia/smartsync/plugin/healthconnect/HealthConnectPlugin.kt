@@ -19,6 +19,15 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
     override val id = ID
     override val name = "Health Connect"
     override val summary = "Writes the watch's steps, heart rate, sleep and workouts to Health Connect."
+    override val description = "Writes the health data of watches with a health log to Android Health Connect, so " +
+        "apps such as Google Fit can show it. Each record is written once and replaced when its value changes. It only " +
+        "writes and never reads Health Connect."
+    override val setupNeeds = "A watch with a health log and Health Connect's write permissions"
+    override val infoUrl = "$REPO/blob/main/docs/healthconnect.md"
+    override val sourceUrl = "$REPO/tree/main/healthconnect"
+    override val issuesUrl = "$REPO/issues"
+    override val author = "ExcuseMi"
+    override val license = "Apache-2.0"
     override val apiVersion = PluginApi.VERSION
     override val version = VERSION
     override val access = ACCESS
@@ -56,6 +65,7 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
 
     companion object {
         const val ID = "health_connect"
+        const val REPO = "https://github.com/ExcuseMi/smartsync-plugins"
 
         /** The plugin's version (healthconnect/build.gradle, tag healthconnect-v<version>). */
         const val VERSION = "0.1.0"

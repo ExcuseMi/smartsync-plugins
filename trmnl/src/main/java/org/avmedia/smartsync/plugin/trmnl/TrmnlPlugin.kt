@@ -32,6 +32,15 @@ class TrmnlPlugin(
     override val id = ID
     override val name = "TRMNL"
     override val summary = "Shows the watch's steps, heart rate and battery on a TRMNL."
+    override val description = "Pushes each watch's steps, heart rate, battery and more to a TRMNL private plugin, so " +
+        "a TRMNL e-paper display shows the watch without Home Assistant. It sends only what changed and stays under " +
+        "TRMNL's webhook limits."
+    override val setupNeeds = "A TRMNL private plugin with the webhook strategy, and its webhook URL"
+    override val infoUrl = "$REPO/blob/main/docs/trmnl.md"
+    override val sourceUrl = "$REPO/tree/main/trmnl"
+    override val issuesUrl = "$REPO/issues"
+    override val author = "ExcuseMi"
+    override val license = "Apache-2.0"
     override val apiVersion = PluginApi.VERSION
     override val version = VERSION
     override val access = ACCESS
@@ -49,7 +58,7 @@ class TrmnlPlugin(
 
     override suspend fun activate(host: PluginHost) {
         this.host = host
-        host.declareNeeds(PluginNeeds(values = Payload.VALUE_KEYS, healthReads = true))
+        host.declareNeeds(NEEDS)
         sender = Sender(host, transport, clock)
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         settingsChanged()
@@ -65,12 +74,17 @@ class TrmnlPlugin(
 
     override suspend fun onEvent(event: WatchEvent) {
         val s = sender ?: return
-        val watch = event.watch ?: return
         when (event) {
             is WatchEvent.ValuesUpdated, is WatchEvent.HealthRead, is WatchEvent.Connected, is WatchEvent.Disconnected,
             is WatchEvent.SettingChanged -> {
-                s.markDirty(watch)
+                event.watch?.let { s.markDirty(it) }
                 schedule(clock() + Limits.COALESCE_MILLIS)
+            }
+            // The host's periodic wake-up, also with the app stopped: what changed (or waits after a failure) goes out
+            // now, before the host lets the process go; a send is still kept to the interval and the back-off.
+            is WatchEvent.Wake -> {
+                s.markAllDirty()
+                runFlush()
             }
             else -> Unit
         }
@@ -119,6 +133,12 @@ class TrmnlPlugin(
 
     companion object {
         const val ID = "trmnl"
+        const val REPO = "https://github.com/ExcuseMi/smartsync-plugins"
+
+        /** About as often as the shortest send interval allows, and the host's least (15 minutes). */
+        const val WAKE_MINUTES = 15
+
+        val NEEDS = PluginNeeds(values = Payload.VALUE_KEYS, healthReads = true, wakeEveryMinutes = WAKE_MINUTES)
 
         /** The plugin's version (trmnl/build.gradle, tag trmnl-v<version>). */
         const val VERSION = "0.1.0"

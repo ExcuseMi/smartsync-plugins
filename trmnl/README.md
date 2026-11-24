@@ -71,7 +71,7 @@ every value) is 859 bytes as a request, 17 % of the standard limit. Four watches
 ## Build
 
 A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
-JitPack after a tag `trmnl-v<version>`: `com.github.ExcuseMi.smartsync-plugins:trmnl:trmnl-v<version>` (no tag yet). The plugin compiles against `plugin-api` with `compileOnly` (the app provides it).
+JitPack after a tag `trmnl-v<version>`: `com.github.ExcuseMi.smartsync-plugins:trmnl:trmnl-v<version>`. The plugin compiles against `plugin-api` with `compileOnly` (the app provides it).
 
 ## License
 
