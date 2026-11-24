@@ -122,7 +122,7 @@ class Bridge(
 
     suspend fun handle(topic: String, payload: String) {
         if (topic == topics.haStatus) {
-            if (payload.isEmpty()) rediscover()
+            if (payload.trim().equals(ONLINE, ignoreCase = true)) rediscover()
             return
         }
         val (node, rest) = topics.parseCommand(topic) ?: return
@@ -180,7 +180,7 @@ class Bridge(
     private val lastResult = HashMap<WatchId, String>()
 
     private fun restoreState(watch: WatchId, key: String) = synchronized(lock) {
-        topics.settingState(watch, key)
+        sent.remove(topics.settingState(watch, key))
         host.watches().firstOrNull { it.id == watch }?.let { syncLocked(it) }
         Unit
     }
@@ -220,7 +220,7 @@ class Bridge(
      * button stays available with its last values (it is away most of the day by design).
      */
     private fun online(w: PairedWatch): Boolean =
-        Capability.ALWAYS_CONNECTED !in w.capabilities || connectedNow.isEmpty() || connectedNow.isNotEmpty()
+        Capability.ALWAYS_CONNECTED !in w.capabilities || (connectedNow[w.id] ?: w.connected)
 
     /** State topic to payload for [w]: its values, then its settings. Absent values publish nothing. */
     internal fun states(w: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {

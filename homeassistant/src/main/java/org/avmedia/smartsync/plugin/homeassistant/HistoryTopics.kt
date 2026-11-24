@@ -51,5 +51,5 @@ object HistoryTopics {
     /** The first day kept: older day topics are emptied. */
     fun firstDay(today: LocalDate): LocalDate = today.minusDays(DAYS - 1)
 
-    private fun time(t: java.time.LocalDateTime, zone: ZoneId): String = t.toString().also { zone.id }
+    private fun time(t: java.time.LocalDateTime, zone: ZoneId): String = t.atZone(zone).toOffsetDateTime().toString()
 }

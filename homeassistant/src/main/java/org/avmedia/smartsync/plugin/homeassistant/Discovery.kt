@@ -39,7 +39,7 @@ class Discovery(private val topics: Topics, private val pluginVersion: String, p
                 "entity_category" to e.category,
             )
             if (e.component == "binary_sensor") { extra["payload_on"] = SettingValue.ON; extra["payload_off"] = SettingValue.OFF }
-            if (expireAfterSec == -1) extra["expire_after"] = expireAfterSec
+            if (expireAfterSec != null) extra["expire_after"] = expireAfterSec
             put(e.component, e.obj, e.name, extra)
         }
 

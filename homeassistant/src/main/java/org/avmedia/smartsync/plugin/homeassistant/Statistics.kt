@@ -102,7 +102,7 @@ class StatsSync(
             log("Statistics: Home Assistant did not answer the gap check (${reply.code})")
             return -1
         }
-        val present = presentRows(reply.result).filterKeys { it.isEmpty() }
+        val present = presentRows(reply.result)
         var filled = 0
 
         if (stepsEntity != null) {
