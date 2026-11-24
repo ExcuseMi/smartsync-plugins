@@ -43,6 +43,7 @@ class RepoGuardTest {
         assertEquals(setOf(":plugin-api"), Regex("""project\('([^']+)'\)""").findAll(build).map { it.groupValues[1] }.toSet())
     }
 
+    /** The one text guard of the repository: every module and the root files (plugins and plugin-api alike). */
     @Test fun noFileHasPrivateReferencesAiLinesOrEmDashes() {
         val pattern = Regex(
             listOf(
@@ -53,7 +54,7 @@ class RepoGuardTest {
                 """\bowner'?s?\s+(log|logs|screenshot|screenshots|dump|hint|test|reads|watch|capture)\b""",
                 """\b(owner|user)\b,?\s+20\d\d-\d\d-\d\d""", """\((owner|user),?\s*20\d\d""",
                 """\blogs?\s+(of\s+)?20\d\d-\d\d-\d\d""", """\buser'?s (capture|log|screenshot|watch)\b""", """parse_\w+\.py""",
-                """Generated with""", """Co-Authored-By""", """\bClaude\b""", """—""",
+                """Generated with""", """Co-Authored-By""", """noreply@anthropic""", """\bClaude\b""", """—""",
             ).joinToString("|"),
             RegexOption.IGNORE_CASE,
         )
