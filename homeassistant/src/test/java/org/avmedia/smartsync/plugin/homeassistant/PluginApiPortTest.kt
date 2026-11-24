@@ -85,6 +85,9 @@ class PluginApiPortTest {
         val link = FakeLink()
         val plugin = HomeAssistantPlugin({ link }, {})
         plugin.activate(host)
+        // The first publish runs on the plugin's own scope after the connection.
+        val until = System.currentTimeMillis() + 10_000
+        while (link.published.count { it.topic.contains(node) } < 30 && System.currentTimeMillis() < until) Thread.sleep(20)
         val old = link.published.filter { it.retain && it.topic.contains(node) && it.payload.isNotEmpty() }.map { it.topic }.toSet()
         assertTrue(old.size > 30)
         // The host moved the watch's data to its new address: only the new id is paired now.
