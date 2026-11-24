@@ -51,6 +51,10 @@ data class SettingInfo(
     val label: String = key,
     /** What writing it needs ([PluginAccess.controls]). */
     val control: Control = Control.WATCH_SETTINGS,
+    /** Where the app shows it: the settings category ("Health settings"); null when the host does not say. */
+    val category: String? = null,
+    /** The section of [category] it is in ("Sleep"); null when the host does not say. */
+    val section: String? = null,
 )
 
 enum class SettingType { CHOICE, WHOLE, BOOL, TIME }
