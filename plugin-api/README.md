@@ -3,7 +3,11 @@
 The interface between Smart Sync (the host) and its plugins (Home Assistant, Health Connect, a TRMNL webhook, ...).
 Pure Kotlin plus Android `Context` and Compose for a plugin's screens. No Casio, Home Assistant or app classes.
 
-Coordinates (JitPack): `com.github.ExcuseMi:CasioGShockSmartSync:plugin-api-v<version>` (JitPack names the one published module after the repository; a commit works too: `...:CasioGShockSmartSync:<commit>`). Changes: `CHANGELOG.md`.
+Coordinates (JitPack): `com.github.ExcuseMi.smartsync-plugins:plugin-api:plugin-api-v<version>` (a commit works too: `...:plugin-api:<commit>`). Changes: `CHANGELOG.md`.
+
+The public interface is dumped in `api/plugin-api.api` (Kotlin binary-compatibility-validator). CI runs `apiCheck`:
+any change to the interface that is not in the dump turns it red. A deliberate change updates the dump in the same
+commit (`./gradlew :plugin-api:apiDump`, or the `plugin-api-dump` artifact of the red run) and its CHANGELOG line.
 
 Plugins are compiled into the app and get the application `Context`. The access declaration is therefore a checked
 promise to the person, not a sandbox: the host checks what goes through this interface; plugins are reviewed code.
@@ -12,7 +16,7 @@ promise to the person, not a sandbox: the host checks what goes through this int
 - Implements `WatchPlugin` (public no-argument constructor) and lists it in
   `src/main/resources/META-INF/services/org.avmedia.smartsync.plugin.api.WatchPlugin`.
 - `apiVersion = PluginApi.VERSION` (compiled in). The host runs it only when `PluginApi.compatible(...)` (below).
-- Depends on the interface as `compileOnly("com.github.ExcuseMi:CasioGShockSmartSync:plugin-api-v<version>")` (the
+- Depends on the interface as `compileOnly("com.github.ExcuseMi.smartsync-plugins:plugin-api:plugin-api-v<version>")` (the
   host brings the classes; `api` or `implementation` would put a second copy in the app) and `testImplementation` of the
   same for its tests. Built with Kotlin 2.4 or newer, Java 21 bytecode.
 - Logs with Timber 5.x (the host's; `compileOnly` as well).

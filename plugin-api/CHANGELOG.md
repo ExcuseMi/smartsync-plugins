@@ -1,6 +1,6 @@
 # plugin-api changelog
 
-Coordinates: `com.github.ExcuseMi:CasioGShockSmartSync:plugin-api-v<version>` (JitPack names the one published module after the repository; a commit works too: `...:CasioGShockSmartSync:<commit>`) (JitPack). Tags `plugin-api-v<version>`.
+Coordinates: `com.github.ExcuseMi.smartsync-plugins:plugin-api:plugin-api-v<version>` (a commit works too: `...:plugin-api:<commit>`) (JitPack). Tags `plugin-api-v<version>`.
 Until 1.0 a new patch only adds and a new minor may break; a host runs a plugin of its own minor whose patch is not
 newer than its own. What may be added: README "What may change in a compatible release". See `PluginApi.compatible`.
 
