@@ -98,6 +98,16 @@ class CommandTest {
         assertEquals("Washing machine done", host.notifications.last().second.text)
     }
 
+    @Test fun appAndTypeMayComeInADataObjectAsTheMobileAppNotifyHadThem() {
+        send("notify", """{"title": "Door", "message": "Front door open", "data": {"app": "Alarm", "type": "call"}}""")
+        val n = host.notifications.single().second
+        assertEquals(org.avmedia.smartsync.plugin.api.NotificationKind.CALL, n.kind)
+        assertEquals("Alarm" to "Door", n.app to n.title)
+        send("notify", """{"message": "x", "app": "Top", "type": "email", "data": {"app": "Inner", "type": "call"}}""")
+        val top = host.notifications.last().second
+        assertEquals("the top-level field wins", "Top" to org.avmedia.smartsync.plugin.api.NotificationKind.EMAIL, top.app to top.kind)
+    }
+
     @Test fun aButtonPressWhileTheBrokerIsAwayIsSentAtTheNextConnection() {
         link.connected = false
         bridge.buttonPressed(gbx)

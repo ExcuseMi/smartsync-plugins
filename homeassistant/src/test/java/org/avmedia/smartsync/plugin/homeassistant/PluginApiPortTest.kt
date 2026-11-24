@@ -80,6 +80,25 @@ class PluginApiPortTest {
         plugin.deactivate()
     }
 
+    @Test fun aRePairedWatchLeavesHomeAssistantUnderItsOldIdAndShowsUnderItsNewOne() = runTest {
+        Watches.config().save(host.plugin)
+        val link = FakeLink()
+        val plugin = HomeAssistantPlugin({ link }, {})
+        plugin.activate(host)
+        val old = link.published.filter { it.retain && it.topic.contains(node) && it.payload.isNotEmpty() }.map { it.topic }.toSet()
+        assertTrue(old.size > 30)
+        // The host moved the watch's data to its new address: only the new id is paired now.
+        val newNode = "gshock-c51422f1e489"
+        host.remove(gbx)
+        val moved = host.add(newNode, "CASIO GBX-H5600", Watches.GBX_CAPS, Watches.GBX_CATALOG)
+        host.values[moved]!!["watch.battery"] = 80
+        plugin.onEvent(WatchEvent.WatchRePaired(gbx, moved))
+        old.forEach { assertEquals("$it emptied", "", link.last(it)?.payload) }
+        assertEquals("80", link.last("smartsync/$newNode/state/battery")?.payload)
+        assertFalse(host.plugin.keys().any { it == Bridge.TOPICS_KEY + node })
+        plugin.deactivate()
+    }
+
     @Test fun settingStatesComeFromTheHostsSettings() {
         val link = FakeLink()
         Bridge(host, link, Watches.config(), "0.1.0") {}.onConnected()
