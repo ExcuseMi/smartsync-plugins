@@ -232,7 +232,7 @@ class Bridge(
         }
         val settings = host.settings(w.id).values
         for (s in catalog) {
-            SettingValue.format(s, settings[s.key])?.let { out[topics.settingState(w.id, s.key)] = it }
+            SettingValue.format(s, values["watch.setting.${s.key}"])?.let { out[topics.settingState(w.id, s.key)] = it }
         }
         return out
     }

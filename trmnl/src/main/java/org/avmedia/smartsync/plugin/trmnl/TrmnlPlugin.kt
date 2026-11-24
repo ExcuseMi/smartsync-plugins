@@ -82,10 +82,6 @@ class TrmnlPlugin(
             }
             // The host's periodic wake-up, also with the app stopped: what changed (or waits after a failure) goes out
             // now, before the host lets the process go; a send is still kept to the interval and the back-off.
-            is WatchEvent.Wake -> {
-                s.markAllDirty()
-                runFlush()
-            }
             else -> Unit
         }
     }

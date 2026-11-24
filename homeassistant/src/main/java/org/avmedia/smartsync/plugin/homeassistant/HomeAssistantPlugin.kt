@@ -97,7 +97,6 @@ class HomeAssistantPlugin(
             is WatchEvent.WorkoutStored -> { b.sync(event.watch); history(event.watch, null) }
             is WatchEvent.ButtonPressed -> b.buttonPressed(event.watch)
             is WatchEvent.WatchRemoved -> { b.removeWatch(event.watch); scope?.launch { dashboards.remove(event.watch) } }
-            is WatchEvent.Wake -> wake(b)
             else -> Unit
         }
     }
@@ -300,7 +299,7 @@ class HomeAssistantPlugin(
             values = if (cfg.shareHealth) Entities.VALUE_KEYS else Entities.VALUE_KEYS_WITHOUT_HEALTH,
             settings = true,
             buttonPress = true,
-            healthReads = cfg.shareHealth,
+            healthReads = true,
             wakeEveryMinutes = when {
                 cfg.mode == ConnectMode.THROUGH_HA -> HEARTBEAT_WAKE_MIN
                 cfg.hasHaApi && cfg.shareHealth -> GAP_WAKE_MIN

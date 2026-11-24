@@ -23,7 +23,7 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
         "apps such as Google Fit can show it. Each record is written once and replaced when its value changes. It only " +
         "writes and never reads Health Connect."
     override val setupNeeds = "A watch with a health log and Health Connect's write permissions"
-    override val infoUrl = "$REPO/blob/main/docs/healthconnect.md"
+    override val infoUrl = "$REPO"
     override val sourceUrl = "$REPO/tree/main/healthconnect"
     override val issuesUrl = "$REPO/issues"
     override val author = "ExcuseMi"

@@ -115,7 +115,7 @@ object Entities {
      * (no caps yet) gets only those every watch has.
      */
     fun valuesFor(caps: Set<Capability>, health: Boolean = true): List<ValueEntity> =
-        VALUES.filter { (it.needs == null || it.needs in caps) && (health || !isHealth(it)) }
+        VALUES.filter { (it.needs == null || it.needs in caps) }
 
     /** "CASIO GBX-H5600" to "casio_gbx_h5600", as Home Assistant makes an entity id from a name. */
     fun slug(text: String): String =
@@ -139,7 +139,7 @@ object Entities {
             fun offset() = runCatching { java.time.OffsetDateTime.parse(s).toString() }.getOrNull()
             fun local() = runCatching { java.time.LocalDateTime.parse(s).atZone(zone).toOffsetDateTime().toString() }.getOrNull()
             when (type) {
-                ValueType.LOCAL_DATE_TIME -> local()
+                ValueType.LOCAL_DATE_TIME -> offset()
                 ValueType.DATE_TIME -> offset()
                 else -> offset() ?: local()
             }
