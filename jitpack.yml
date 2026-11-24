@@ -1,0 +1,6 @@
+# JitPack builds every module of the tag (plugin-api-v<version>, homeassistant-v<version>, ...); each is
+# com.github.ExcuseMi.smartsync-plugins:<module>:<tag>.
+jdk:
+  - openjdk21
+install:
+  - ./gradlew --no-daemon publishToMavenLocal -x lint
