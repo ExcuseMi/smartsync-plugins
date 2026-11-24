@@ -39,6 +39,7 @@ class HomeAssistantPlugin(
 ) : WatchPlugin {
     override val id = ID
     override val name = NAME
+    override val summary = SUMMARY
     override val apiVersion = PluginApi.VERSION
     override val version = VERSION
     override val access = ACCESS
@@ -60,7 +61,7 @@ class HomeAssistantPlugin(
 
     override suspend fun activate(host: PluginHost) {
         this.host = host
-        val settingKeys = host.valueKeys().filter { it.startsWith("watch.setting.") }
+        val settingKeys = host.valueCatalog().map { it.key }.filter { it.startsWith("watch.setting.") }
         host.declareNeeds(PluginNeeds(values = Entities.VALUE_KEYS + settingKeys, buttonPress = true, healthReads = true))
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         runLock.withLock { start() }
@@ -80,7 +81,6 @@ class HomeAssistantPlugin(
             is WatchEvent.Disconnected -> b.connectionChanged(event.watch, false)
             is WatchEvent.ValuesUpdated -> b.sync(event.watch)
             is WatchEvent.SettingChanged -> b.sync(event.watch)
-            is WatchEvent.Condition -> b.sync(event.watch)
             is WatchEvent.HealthRead -> { b.sync(event.watch); history(event.watch, StatsSync.GAP_DAYS) }
             is WatchEvent.WorkoutStored -> { b.sync(event.watch); history(event.watch, null) }
             is WatchEvent.ButtonPressed -> b.buttonPressed(event.watch)
@@ -210,7 +210,7 @@ class HomeAssistantPlugin(
         val ACCESS = PluginAccess(
             reads = setOf(
                 DataUse.STEPS, DataUse.HEART_RATE, DataUse.SLEEP, DataUse.BLOOD_OXYGEN, DataUse.WORKOUTS,
-                DataUse.BATTERY_AND_TEMPERATURE, DataUse.WATCH_SETTINGS, DataUse.WATCH_INFO, DataUse.PHONE,
+                DataUse.BATTERY_AND_TEMPERATURE, DataUse.WATCH_SETTINGS, DataUse.WATCH_INFO, DataUse.PHONE, DataUse.PHONE_BATTERY,
             ),
             controls = setOf(Control.NOTIFICATIONS, Control.WATCH_SETTINGS, Control.WATCH_FACE, Control.BUTTON_PRESS),
             sendsTo = listOf("your MQTT broker"),

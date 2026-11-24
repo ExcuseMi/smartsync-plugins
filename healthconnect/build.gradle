@@ -5,9 +5,9 @@ plugins {
     id 'maven-publish'
 }
 
-// The plugin version. Tag: v<version>.
+// The plugin version. Tag: healthconnect-v<version>.
 version = '0.1.0'
-group = 'com.github.ExcuseMi'
+group = 'com.github.ExcuseMi.smartsync-plugins'
 
 android {
     namespace = 'org.avmedia.smartsync.plugin.healthconnect'
@@ -54,7 +54,8 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.material3)
     implementation(libs.activity.compose)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.timber)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 }
@@ -65,7 +66,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = project.group
-                artifactId = 'smartsync-healthconnect-plugin'
+                artifactId = 'healthconnect'
                 version = project.version
             }
         }

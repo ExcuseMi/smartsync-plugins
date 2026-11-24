@@ -33,14 +33,8 @@ same data writes nothing; a changed value is written with the next `clientRecord
 
 ## Build
 
-The app pulls the plugin as a Gradle dependency (JitPack, tags `v<version>`):
-
-```groovy
-implementation("com.github.ExcuseMi:smartsync-healthconnect-plugin:v0.1.0")
-```
-
-Until `plugin-api-v0.1.0` is on JitPack the interface is a vendored copy in `vendor/plugin-api` (see its VENDORED.md).
-CI (GitHub Actions) runs the unit tests, lint and a release build of the library.
+A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
+JitPack after a tag `healthconnect-v<version>`: `com.github.ExcuseMi.smartsync-plugins:healthconnect:healthconnect-v<version>` (no tag yet).
 
 ## License
 

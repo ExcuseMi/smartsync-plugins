@@ -32,12 +32,6 @@ import org.avmedia.smartsync.plugin.api.PluginUi
 /** The settings: Home Assistant address and token first, then how to connect (through Home Assistant or a broker), then topics. */
 internal class HaUi(private val plugin: HomeAssistantPlugin) : PluginUi {
     @Composable
-    override fun statusLine(): String {
-        val s by plugin.status.collectAsState()
-        return s
-    }
-
-    @Composable
     override fun SettingsScreen(onBack: () -> Unit) {
         val host = plugin.host() ?: return
         val saved = remember { BrokerConfig.load(host.storage()) }

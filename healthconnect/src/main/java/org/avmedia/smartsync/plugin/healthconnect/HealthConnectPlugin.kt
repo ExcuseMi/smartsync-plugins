@@ -1,5 +1,8 @@
 package org.avmedia.smartsync.plugin.healthconnect
 
+import org.avmedia.smartsync.plugin.api.Capability
+import org.avmedia.smartsync.plugin.api.DataUse
+import org.avmedia.smartsync.plugin.api.PluginAccess
 import org.avmedia.smartsync.plugin.api.PluginApi
 import org.avmedia.smartsync.plugin.api.PluginHost
 import org.avmedia.smartsync.plugin.api.PluginNeeds
@@ -13,9 +16,12 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
 
     constructor() : this({ HealthConnectSink(it.context) })
 
-    override val id = "health_connect"
+    override val id = ID
     override val name = "Health Connect"
+    override val summary = "Writes the watch's steps, heart rate, sleep and workouts to Health Connect."
     override val apiVersion = PluginApi.VERSION
+    override val version = VERSION
+    override val access = ACCESS
 
     @Volatile internal var host: PluginHost? = null
         private set
@@ -47,4 +53,19 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
     }
 
     override val ui: PluginUi by lazy { HealthConnectUi(this) }
+
+    companion object {
+        const val ID = "health_connect"
+
+        /** The plugin's version (healthconnect/build.gradle, tag healthconnect-v<version>). */
+        const val VERSION = "0.1.0"
+
+        val ACCESS = PluginAccess(
+            reads = setOf(DataUse.STEPS, DataUse.HEART_RATE, DataUse.SLEEP, DataUse.BLOOD_OXYGEN, DataUse.WORKOUTS),
+            sendsTo = listOf("Health Connect on this phone"),
+            stores = listOf("which records it wrote, so none is written twice"),
+            requires = setOf(Capability.HEALTH_LOG),
+            uses = setOf(Capability.STEPS, Capability.HEART_RATE, Capability.SLEEP, Capability.BLOOD_OXYGEN, Capability.WORKOUTS),
+        )
+    }
 }

@@ -8,7 +8,7 @@ import java.io.File
 
 /**
  * Repo rules, as in the app: versions agree, the plugin is found by the host, it reaches the app only through
- * plugin-api, and no text has private references, AI lines or em-dashes (the vendored copy is not scanned).
+ * plugin-api, and no text has private references, AI lines or em-dashes.
  */
 class RepoGuardTest {
     private val module = File(".").canonicalFile
@@ -18,7 +18,7 @@ class RepoGuardTest {
         val declared = Regex("""(?m)^version = '([^']+)'""").find(File("build.gradle").readText())?.groupValues?.get(1)
         assertEquals(HomeAssistantPlugin.VERSION, declared)
         assertTrue(PluginApi.compatible(HomeAssistantPlugin().apiVersion))
-        assertTrue(File(repo, "CHANGELOG.md").readText().contains("## ${HomeAssistantPlugin.VERSION}"))
+        assertTrue(File(module, "CHANGELOG.md").readText().contains("## ${HomeAssistantPlugin.VERSION}"))
     }
 
     @Test fun theServiceFileNamesThePlugin() {

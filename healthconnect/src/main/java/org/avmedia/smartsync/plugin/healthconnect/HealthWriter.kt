@@ -5,6 +5,7 @@ import org.avmedia.smartsync.plugin.api.HistoryRange
 import org.avmedia.smartsync.plugin.api.PluginHost
 import org.avmedia.smartsync.plugin.api.WatchId
 import org.avmedia.smartsync.plugin.api.WorkoutRecord
+import timber.log.Timber
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,6 +18,8 @@ class HealthWriter(
     private val host: PluginHost,
     private val sink: HealthSink,
     private val clock: Clock = Clock.systemDefaultZone(),
+    /** App log lines (plugin-api: plugins log with Timber under their id). */
+    private val log: (String) -> Unit = { Timber.tag(HealthConnectPlugin.ID).i(it) },
 ) {
     private val planner = RecordPlanner(clock.zone)
     private var lastProblem: String? = null
@@ -26,18 +29,18 @@ class HealthWriter(
         // Whole days: a day's heart rate is one record, so it is written with all of that day's samples.
         val days = HistoryRange.days(range.from.toLocalDate(), range.to.toLocalDate())
         val planned = buildList {
-            if (DataKind.Hours in kinds && RecordType.STEPS in types) addAll(planner.steps(host.history(watch, DataKind.Hours, days)))
+            if (DataKind.Hours in kinds && RecordType.STEPS in types) addAll(planner.steps(host.history(watch, DataKind.Hours, days).valueOrNull().orEmpty()))
             if (DataKind.HeartRate in kinds && RecordType.HEART_RATE in types) {
-                addAll(planner.heartRate(host.history(watch, DataKind.HeartRate, days)))
+                addAll(planner.heartRate(host.history(watch, DataKind.HeartRate, days).valueOrNull().orEmpty()))
             }
             if (DataKind.Days in kinds && (types.contains(RecordType.RESTING_HEART_RATE) || types.contains(RecordType.OXYGEN_SATURATION))) {
-                addAll(planner.days(host.history(watch, DataKind.Days, days), LocalDate.now(clock)))
+                addAll(planner.days(host.history(watch, DataKind.Days, days).valueOrNull().orEmpty(), LocalDate.now(clock)))
             }
             if (DataKind.Nights in kinds && RecordType.SLEEP in types) {
-                addAll(host.history(watch, DataKind.Nights, days).mapNotNull { planner.night(it) })
+                addAll(host.history(watch, DataKind.Nights, days).valueOrNull().orEmpty().mapNotNull { planner.night(it) })
             }
             if (DataKind.Workouts in kinds && RecordType.EXERCISE in types) {
-                host.history(watch, DataKind.Workouts, days).forEach { addAll(planner.workout(it)) }
+                host.history(watch, DataKind.Workouts, days).valueOrNull().orEmpty().forEach { addAll(planner.workout(it)) }
             }
         }
         write(watch, planned.filter { it.type in types })
@@ -66,7 +69,7 @@ class HealthWriter(
         try {
             sink.write(watch, host.watches().firstOrNull { it.id == watch }?.name, pending)
         } catch (e: Exception) {
-            if (lastProblem != "write") host.failure("Health Connect: write failed", e)
+            if (lastProblem != "write") log("Health Connect: write failed: ${e.javaClass.simpleName}")
             lastProblem = "write"
             return
         }
@@ -74,13 +77,13 @@ class HealthWriter(
         lastProblem = null
         val counts = pending.groupingBy { it.record.type }.eachCount().toSortedMap()
         val summary = counts.entries.joinToString(", ") { (t, n) -> "${label(t)} $n" }
-        host.log("Health Connect: wrote $summary")
+        log("Health Connect: wrote $summary")
         host.storage().put(LAST_WRITE, LocalDateTime.now(clock).withNano(0).toString())
         host.storage().put(LAST_SUMMARY, summary)
     }
 
     private fun problem(text: String): Set<RecordType>? {
-        if (lastProblem != text) host.log("Health Connect $text: nothing written")
+        if (lastProblem != text) log("Health Connect $text: nothing written")
         lastProblem = text
         return null
     }

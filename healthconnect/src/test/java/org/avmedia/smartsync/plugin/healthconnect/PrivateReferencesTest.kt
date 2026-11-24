@@ -6,7 +6,7 @@ import java.io.File
 
 /**
  * The same rules as the app's guard: say what the watch does in our own words, never point at private notes or another
- * app, never say where a decoding came from. Also no em-dashes. Scans this repository except the vendored copy.
+ * app, never say where a decoding came from. Also no em-dashes. Scans the whole repository.
  */
 class PrivateReferencesTest {
     private val pattern = Regex(

@@ -1,6 +1,5 @@
 package org.avmedia.smartsync.plugin.trmnl
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,17 +30,6 @@ import java.util.Date
 
 /** Settings entry and screen: on/off, one URL for all watches or one per watch, minimum interval. */
 internal class TrmnlUi(private val plugin: TrmnlPlugin) : PluginUi {
-    @Composable
-    override fun SettingsEntry(onOpen: () -> Unit) {
-        val status by plugin.status.collectAsState()
-        val host = plugin.host()
-        val on = host?.let { Settings.load(it).enabled } == true
-        Column(Modifier.fillMaxWidth().clickable(onClick = onOpen).padding(16.dp)) {
-            Text(plugin.name, style = MaterialTheme.typography.titleMedium)
-            Text(statusLine(on, status), style = MaterialTheme.typography.bodySmall)
-        }
-    }
-
     @Composable
     override fun SettingsScreen(onBack: () -> Unit) {
         val host = plugin.host() ?: return

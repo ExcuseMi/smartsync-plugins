@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,14 +34,6 @@ import org.avmedia.smartsync.plugin.healthconnect.SinkStatus
 
 /** Settings row and screen: Health Connect status, the permission request, the last write. */
 internal class HealthConnectUi(private val plugin: HealthConnectPlugin) : PluginUi {
-
-    @Composable
-    override fun SettingsEntry(onOpen: () -> Unit) {
-        Column(Modifier.fillMaxWidth().clickable(onClick = onOpen).padding(16.dp)) {
-            Text(plugin.name, style = MaterialTheme.typography.titleMedium)
-            Text(summary(), style = MaterialTheme.typography.bodySmall)
-        }
-    }
 
     @Composable
     override fun SettingsScreen(onBack: () -> Unit) {

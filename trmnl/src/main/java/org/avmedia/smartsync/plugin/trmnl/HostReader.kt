@@ -3,6 +3,7 @@ package org.avmedia.smartsync.plugin.trmnl
 import org.avmedia.smartsync.plugin.api.DataKind
 import org.avmedia.smartsync.plugin.api.HistoryRange
 import org.avmedia.smartsync.plugin.api.PluginHost
+import org.avmedia.smartsync.plugin.api.PluginResult
 import org.avmedia.smartsync.plugin.api.WatchId
 import java.time.LocalDateTime
 
@@ -27,6 +28,6 @@ object HostReader {
     }
 
     /** A history read that fails leaves its part out of the payload; the rest still goes. */
-    private suspend fun <T> safe(block: suspend () -> List<T>): List<T> =
-        try { block() } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (e: Exception) { emptyList() }
+    private suspend fun <T> safe(block: suspend () -> PluginResult<List<T>>): List<T> =
+        try { block().valueOrNull().orEmpty() } catch (e: kotlinx.coroutines.CancellationException) { throw e } catch (e: Exception) { emptyList() }
 }

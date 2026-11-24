@@ -11,12 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.avmedia.smartsync.plugin.api.DataUse
+import org.avmedia.smartsync.plugin.api.PluginAccess
 import org.avmedia.smartsync.plugin.api.PluginApi
 import org.avmedia.smartsync.plugin.api.PluginHost
 import org.avmedia.smartsync.plugin.api.PluginNeeds
 import org.avmedia.smartsync.plugin.api.PluginUi
 import org.avmedia.smartsync.plugin.api.WatchEvent
 import org.avmedia.smartsync.plugin.api.WatchPlugin
+import timber.log.Timber
 
 /**
  * Pushes each watch's values to a TRMNL private plugin (webhook strategy), so a TRMNL shows the watch without Home
@@ -26,9 +29,12 @@ class TrmnlPlugin(
     private val transport: WebhookTransport = HttpTransport,
     private val clock: () -> Long = System::currentTimeMillis,
 ) : WatchPlugin {
-    override val id = "trmnl"
+    override val id = ID
     override val name = "TRMNL"
+    override val summary = "Shows the watch's steps, heart rate and battery on a TRMNL."
     override val apiVersion = PluginApi.VERSION
+    override val version = VERSION
+    override val access = ACCESS
 
     private var host: PluginHost? = null
     private var sender: Sender? = null
@@ -62,7 +68,7 @@ class TrmnlPlugin(
         val watch = event.watch ?: return
         when (event) {
             is WatchEvent.ValuesUpdated, is WatchEvent.HealthRead, is WatchEvent.Connected, is WatchEvent.Disconnected,
-            is WatchEvent.Condition, is WatchEvent.SettingChanged -> {
+            is WatchEvent.SettingChanged -> {
                 s.markDirty(watch)
                 schedule(clock() + Limits.COALESCE_MILLIS)
             }
@@ -99,7 +105,7 @@ class TrmnlPlugin(
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: Exception) {
-                host?.failure("TRMNL: send failed", e)
+                Timber.tag(ID).w("TRMNL: send failed: %s", e.javaClass.simpleName)
                 clock() + Limits.COALESCE_MILLIS * 5
             }
         }
@@ -112,7 +118,15 @@ class TrmnlPlugin(
     override val ui: PluginUi = TrmnlUi(this)
 
     companion object {
-        /** The plugin's version (plugin/build.gradle, tag v<version>). */
+        const val ID = "trmnl"
+
+        /** The plugin's version (trmnl/build.gradle, tag trmnl-v<version>). */
         const val VERSION = "0.1.0"
+
+        val ACCESS = PluginAccess(
+            reads = setOf(DataUse.STEPS, DataUse.HEART_RATE, DataUse.BATTERY_AND_TEMPERATURE, DataUse.WATCH_INFO, DataUse.WATCH_SETTINGS, DataUse.PHONE),
+            sendsTo = listOf("your TRMNL private plugin (webhook)"),
+            stores = listOf("TRMNL webhook URLs and what was sent last"),
+        )
     }
 }

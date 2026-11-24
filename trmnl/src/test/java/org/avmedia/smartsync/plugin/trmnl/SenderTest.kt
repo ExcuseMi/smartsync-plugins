@@ -15,7 +15,7 @@ class SenderTest {
     private val host = FakeHost()
     private val net = FakeTransport()
     private val clock = FakeClock()
-    private val sender = Sender(host, net, { clock.now }, ZoneOffset.UTC)
+    private val sender = Sender(host, net, { clock.now }, ZoneOffset.UTC, host::log)
     private val w: WatchId = host.addWatch("gshock-aabbccddeeff")
 
     init {

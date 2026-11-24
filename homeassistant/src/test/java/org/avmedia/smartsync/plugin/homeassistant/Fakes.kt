@@ -3,6 +3,7 @@ package org.avmedia.smartsync.plugin.homeassistant
 import android.content.Context
 import org.avmedia.smartsync.plugin.api.Capability
 import org.avmedia.smartsync.plugin.api.DataKind
+import org.avmedia.smartsync.plugin.api.DataUse
 import org.avmedia.smartsync.plugin.api.Delivered
 import org.avmedia.smartsync.plugin.api.Delivery
 import org.avmedia.smartsync.plugin.api.HeartRateSample
@@ -18,6 +19,8 @@ import org.avmedia.smartsync.plugin.api.PluginStorage
 import org.avmedia.smartsync.plugin.api.SettingInfo
 import org.avmedia.smartsync.plugin.api.SettingType
 import org.avmedia.smartsync.plugin.api.SettingsSnapshot
+import org.avmedia.smartsync.plugin.api.ValueInfo
+import org.avmedia.smartsync.plugin.api.ValueType
 import org.avmedia.smartsync.plugin.api.WatchCommand
 import org.avmedia.smartsync.plugin.api.WatchId
 import org.avmedia.smartsync.plugin.api.WatchNotification
@@ -32,6 +35,7 @@ class MemStorage : PluginStorage {
     override fun put(key: String, value: String) { map[key] = value }
     override fun delete(key: String) { map.remove(key) }
     override fun keys(): Set<String> = map.keys.toSet()
+    override fun putAll(values: Map<String, String?>) { values.forEach { (k, v) -> if (v == null) map.remove(k) else map[k] = v } }
 }
 
 /** A host as the app gives it, without a watch or Android: capabilities, catalogue and values are set by the test. */
@@ -81,7 +85,7 @@ class FakeHost : PluginHost {
         return answer
     }
 
-    override fun valueKeys(): List<String> = Entities.VALUE_KEYS.toList() + "watch.setting.watch_face"
+    override fun valueCatalog(): List<ValueInfo> = (Entities.VALUE_KEYS.toList() + "watch.setting.watch_face").map { ValueInfo(it, it, DataUse.WATCH_INFO, ValueType.TEXT) }
     override fun lastValues(watch: WatchId) = WatchValues(watch, values[watch].orEmpty().toMap())
     override fun settings(watch: WatchId) = SettingsSnapshot(watch, settingValues[watch].orEmpty().toMap(), 1L)
     override fun settingCatalog(watch: WatchId): List<SettingInfo> = catalogs[watch].orEmpty()
@@ -103,7 +107,8 @@ class FakeHost : PluginHost {
 
     override fun storage(): PluginStorage = plugin
     override fun storage(watch: WatchId): PluginStorage = perWatch.getOrPut(watch) { MemStorage() }
-    override fun moveWatchData(from: WatchId, to: WatchId) {}
+    override fun missingPermissions(): Set<String> = emptySet()
+    override fun requestPermissions() {}
     override fun declareNeeds(needs: PluginNeeds) { this.needs = needs }
     override fun status(status: PluginStatus) { statuses += status }
 

@@ -9,6 +9,7 @@ import java.security.MessageDigest
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import timber.log.Timber
 
 /** What the settings screen shows. */
 data class SendStatus(val lastSentMillis: Long? = null, val failing: String? = null, val nextTryMillis: Long? = null)
@@ -23,6 +24,8 @@ class Sender(
     private val transport: WebhookTransport,
     private val clock: () -> Long = System::currentTimeMillis,
     private val zone: ZoneId = ZoneId.systemDefault(),
+    /** App log lines (plugin-api: plugins log with Timber under their id). */
+    private val log: (String) -> Unit = { Timber.tag(TrmnlPlugin.ID).i(it) },
 ) {
     private val dirty = LinkedHashSet<WatchId>()
 
@@ -81,7 +84,7 @@ class Sender(
         val result = withContext(Dispatchers.IO) { transport.post(url, body) }
         val kind = FailureKind.of(result)
         if (kind == null) {
-            gate.succeeded(now)?.let { host.log("TRMNL: sending again after $it failed requests") }
+            gate.succeeded(now)?.let { log("TRMNL: sending again after $it failed requests") }
             for ((w, p) in changed) host.storage(w).put(sentKey(url), p.fingerprint)
             synchronized(this) { dirty.removeAll(due.toSet()) }
             status = SendStatus(lastSentMillis = now)
@@ -92,7 +95,7 @@ class Sender(
         if (gate.firstOfKind) {
             val why = result.message?.let { ": $it" }.orEmpty()
             val code = if (result.code > 0) "HTTP ${result.code}" else "no answer"
-            host.log("TRMNL: ${kind.words} ($code$why), next try in ${(until - now) / 60_000} min")
+            log("TRMNL: ${kind.words} ($code$why), next try in ${(until - now) / 60_000} min")
         }
         status = status.copy(failing = kind.words)
         return until

@@ -2,10 +2,14 @@ package org.avmedia.smartsync.plugin.trmnl
 
 import android.content.Context
 import org.avmedia.smartsync.plugin.api.Capability
-import org.avmedia.smartsync.plugin.api.CommandResult
 import org.avmedia.smartsync.plugin.api.DataKind
 import org.avmedia.smartsync.plugin.api.DayRecord
+import org.avmedia.smartsync.plugin.api.Delivered
 import org.avmedia.smartsync.plugin.api.Delivery
+import org.avmedia.smartsync.plugin.api.FailReason
+import org.avmedia.smartsync.plugin.api.PluginResult
+import org.avmedia.smartsync.plugin.api.PluginStatus
+import org.avmedia.smartsync.plugin.api.ValueInfo
 import org.avmedia.smartsync.plugin.api.HeartRateSample
 import org.avmedia.smartsync.plugin.api.HistoryRange
 import org.avmedia.smartsync.plugin.api.HistoryRecord
@@ -29,6 +33,7 @@ class MemStorage : PluginStorage {
     override fun put(key: String, value: String) { map[key] = value }
     override fun delete(key: String) { map.remove(key) }
     override fun keys(): Set<String> = map.keys.toSet()
+    override fun putAll(values: Map<String, String?>) { values.forEach { (k, v) -> if (v == null) map.remove(k) else map[k] = v } }
 }
 
 /** A host with stored values and history, as the app gives them; no watch, no Android. */
@@ -58,29 +63,36 @@ class FakeHost : PluginHost {
     override fun connected(): WatchId? = paired.firstOrNull { it.connected }?.id
     override fun current(): WatchId? = connected() ?: paired.firstOrNull()?.id
     override fun watchName(watch: WatchId): String? = paired.firstOrNull { it.id == watch }?.name
-    override suspend fun notify(watch: WatchId, notification: WatchNotification, delivery: Delivery) = CommandResult.NotSupported("test")
-    override suspend fun command(watch: WatchId, command: WatchCommand, delivery: Delivery) = CommandResult.NotSupported("test")
+    override suspend fun notify(watch: WatchId, notification: WatchNotification, delivery: Delivery): PluginResult<Delivered> =
+        PluginResult.Failed(FailReason.NOT_SUPPORTED, "test")
+    override suspend fun command(watch: WatchId, command: WatchCommand, delivery: Delivery): PluginResult<Delivered> =
+        PluginResult.Failed(FailReason.NOT_SUPPORTED, "test")
+    override fun valueCatalog() = emptyList<ValueInfo>()
     override fun lastValues(watch: WatchId) = WatchValues(watch, values[watch].orEmpty().toMap())
     override fun settings(watch: WatchId) = SettingsSnapshot(watch, emptyMap(), null)
     override fun settingCatalog(watch: WatchId): List<SettingInfo> = emptyList()
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun <T : HistoryRecord> history(watch: WatchId, kind: DataKind<T>, range: HistoryRange): List<T> {
+    override suspend fun <T : HistoryRecord> history(watch: WatchId, kind: DataKind<T>, range: HistoryRange): PluginResult<List<T>> {
         val all: List<HistoryRecord> = when (kind) {
             DataKind.Hours -> hours[watch].orEmpty().filter { range.contains(it.start) }
             DataKind.HeartRate -> heartRate[watch].orEmpty().filter { range.contains(it.time) }
             DataKind.Days -> days[watch].orEmpty().filter { range.contains(it.date.atTime(12, 0)) }
             else -> emptyList()
         }
-        return all as List<T>
+        return PluginResult.Ok(all as List<T>)
     }
 
     override fun storage(): PluginStorage = plugin
     override fun storage(watch: WatchId): PluginStorage = perWatch.getOrPut(watch) { MemStorage() }
-    override fun moveWatchData(from: WatchId, to: WatchId) {}
+    override fun missingPermissions(): Set<String> = emptySet()
+    override fun requestPermissions() {}
     override fun declareNeeds(needs: PluginNeeds) { this.needs = needs }
-    override fun log(line: String) { logs += line }
-    override fun failure(line: String, error: Throwable) { logs += "$line: ${error.javaClass.simpleName}" }
+    val statuses = mutableListOf<PluginStatus>()
+    override fun status(status: PluginStatus) { statuses += status }
+
+    /** The plugin's log lines (Sender's log). */
+    fun log(line: String) { logs += line }
 
     /** A full day up to [end]: every hour's steps, a heart rate sample every 2 minutes, every value the plugin reads. */
     fun fullDay(watch: WatchId, day: LocalDate, end: LocalDateTime = day.atTime(23, 59)) {

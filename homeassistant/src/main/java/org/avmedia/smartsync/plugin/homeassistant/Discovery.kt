@@ -120,7 +120,7 @@ class Discovery(private val topics: Topics, private val pluginVersion: String, p
 
         /** What Home Assistant's notify action sends: its title and message as JSON ([NotifyPayload]). */
         const val NOTIFY_TEMPLATE = "{\"title\": {{ title | tojson }}, \"message\": {{ message | tojson }}}"
-        private val ORIGIN = mapOf("name" to "Smart Sync Home Assistant plugin", "support_url" to "https://github.com/ExcuseMi/smartsync-homeassistant-plugin")
+        private val ORIGIN = mapOf("name" to "Smart Sync Home Assistant plugin", "support_url" to "https://github.com/ExcuseMi/smartsync-plugins")
 
         /** "watch_face" to "Watch face". */
         fun label(key: String): String = key.replace('_', ' ').replace('.', ' ').trim().replaceFirstChar { it.uppercase() }

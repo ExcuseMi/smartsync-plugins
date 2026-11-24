@@ -70,11 +70,8 @@ every value) is 859 bytes as a request, 17 % of the standard limit. Four watches
 
 ## Build
 
-GitHub Actions only (`.github/workflows/ci.yml`): unit tests, lint, release AAR. The plugin compiles against
-`plugin-api` (`compileOnly`: the app provides it). For now that is a vendored copy in `vendor/plugin-api/` (see its
-README), replaced by `com.github.ExcuseMi.CasioGShockSmartSync:plugin-api:plugin-api-v0.1.0` once tagged.
-
-JitPack: `com.github.ExcuseMi:smartsync-trmnl-plugin:v<version>` (tags `v<version>`, version in `plugin/build.gradle`).
+A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
+JitPack after a tag `trmnl-v<version>`: `com.github.ExcuseMi.smartsync-plugins:trmnl:trmnl-v<version>` (no tag yet). The plugin compiles against `plugin-api` with `compileOnly` (the app provides it).
 
 ## License
 

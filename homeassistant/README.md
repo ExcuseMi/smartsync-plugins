@@ -163,6 +163,5 @@ This plugin creates its own device per watch, with entity ids from the watch's n
 automations and dashboards to the new entities, then remove the old mobile app device.
 
 ## Building
-CI builds and tests every push (GitHub Actions). JitPack coordinates after a tag `v<version>`:
-`com.github.ExcuseMi:smartsync-homeassistant-plugin:v0.1.0`. The plugin interface is a vendored copy until
-`plugin-api` is published (`vendor/README.md`).
+A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
+JitPack after a tag `homeassistant-v<version>`: `com.github.ExcuseMi.smartsync-plugins:homeassistant:homeassistant-v<version>` (no tag yet).

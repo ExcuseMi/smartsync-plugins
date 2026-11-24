@@ -31,7 +31,7 @@ class HealthWriterTest {
 
     @Test fun aSecondReadOfTheSameHoursWritesNothing() = runTest {
         val host = host(); val sink = FakeSink()
-        val writer = HealthWriter(host, sink, clock)
+        val writer = HealthWriter(host, sink, clock, host::log)
         writer.healthRead(H5600, read, allKinds)
         assertEquals(3, sink.written.size)
         assertTrue(sink.written.all { it.version == 0L })
@@ -42,7 +42,7 @@ class HealthWriterTest {
 
     @Test fun aChangedHourIsAnUpdateOfTheSameRecordWithTheNextVersion() = runTest {
         val host = host(); val sink = FakeSink()
-        val writer = HealthWriter(host, sink, clock)
+        val writer = HealthWriter(host, sink, clock, host::log)
         writer.healthRead(H5600, read, allKinds)
         host.records[DataKind.Hours] = listOf(HourRecord(day.atTime(8, 0), steps = 500), HourRecord(day.atTime(9, 0), steps = 1400))
         writer.healthRead(H5600, read, allKinds)
@@ -53,14 +53,14 @@ class HealthWriterTest {
 
     @Test fun aNewWriterOnTheSameStorageStillKnowsWhatWasWritten() = runTest {
         val host = host(); val sink = FakeSink()
-        HealthWriter(host, sink, clock).healthRead(H5600, read, allKinds)
-        HealthWriter(host, sink, clock).healthRead(H5600, read, allKinds)
+        HealthWriter(host, sink, clock, host::log).healthRead(H5600, read, allKinds)
+        HealthWriter(host, sink, clock, host::log).healthRead(H5600, read, allKinds)
         assertEquals(1, sink.batches.size)
     }
 
     @Test fun nothingIsWrittenWithoutPermissionAndItIsLoggedOnce() = runTest {
         val host = host(); val sink = FakeSink(allowed = emptySet())
-        val writer = HealthWriter(host, sink, clock)
+        val writer = HealthWriter(host, sink, clock, host::log)
         writer.healthRead(H5600, read, allKinds)
         writer.healthRead(H5600, read, allKinds)
         assertTrue(sink.written.isEmpty())
@@ -70,30 +70,30 @@ class HealthWriterTest {
 
     @Test fun onlyTheAllowedTypesAreWritten() = runTest {
         val host = host(); val sink = FakeSink(allowed = setOf(RecordType.STEPS))
-        HealthWriter(host, sink, clock).healthRead(H5600, read, allKinds)
+        HealthWriter(host, sink, clock, host::log).healthRead(H5600, read, allKinds)
         assertEquals(setOf(RecordType.STEPS), sink.written.map { it.record.type }.toSet())
     }
 
     @Test fun nothingIsWrittenWhenHealthConnectIsMissing() = runTest {
         val host = host(); val sink = FakeSink(status = SinkStatus.NOT_INSTALLED)
-        HealthWriter(host, sink, clock).healthRead(H5600, read, allKinds)
+        HealthWriter(host, sink, clock, host::log).healthRead(H5600, read, allKinds)
         assertTrue(sink.written.isEmpty())
     }
 
     @Test fun aWatchWithoutHealthDataGetsNothing() = runTest {
         val host = host().apply { paired = listOf(PairedWatch(H5600, "CASIO GW-B5600", setOf(Capability.ALARMS), true)) }
         val sink = FakeSink()
-        HealthWriter(host, sink, clock).healthRead(H5600, read, allKinds)
+        HealthWriter(host, sink, clock, host::log).healthRead(H5600, read, allKinds)
         assertTrue(sink.written.isEmpty())
         assertTrue(host.logs.isEmpty())
     }
 
     @Test fun aFailedWriteIsLoggedOnceAndRetriedNextTime() = runTest {
         val host = host(); val sink = FakeSink().apply { fail = IllegalStateException("refused") }
-        val writer = HealthWriter(host, sink, clock)
+        val writer = HealthWriter(host, sink, clock, host::log)
         writer.healthRead(H5600, read, allKinds)
         writer.healthRead(H5600, read, allKinds)
-        assertEquals(1, host.failures.size)
+        assertEquals(1, host.logs.count { "write failed" in it })
         sink.fail = null
         writer.healthRead(H5600, read, allKinds)
         assertEquals(3, sink.written.size)

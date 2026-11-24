@@ -5,9 +5,9 @@ plugins {
     id 'maven-publish'
 }
 
-// Tag v<version>. HomeAssistantPlugin.VERSION states the same (RepoGuardTest).
+// Tag homeassistant-v<version>. HomeAssistantPlugin.VERSION states the same (RepoGuardTest).
 version = '0.1.0'
-group = 'com.github.ExcuseMi'
+group = 'com.github.ExcuseMi.smartsync-plugins'
 
 android {
     namespace = 'org.avmedia.smartsync.plugin.homeassistant'
@@ -70,7 +70,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = project.group
-                artifactId = 'smartsync-homeassistant-plugin'
+                artifactId = 'homeassistant'
                 version = project.version
             }
         }
