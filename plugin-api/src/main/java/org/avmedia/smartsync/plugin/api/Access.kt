@@ -78,7 +78,6 @@ enum class DataUse {
         val ALL: Set<DataUse> get() = entries.toSet()
 
         /** The kinds that come from the watch (not the phone's). */
-        val WATCH: Set<DataUse> get() = entries.toSet() - setOf(PHONE, PHONE_BATTERY, PHONE_LOCATION)
 
         /** What a stored record of [kind] needs. */
         fun of(kind: DataKind<*>): DataUse = when (kind) {
