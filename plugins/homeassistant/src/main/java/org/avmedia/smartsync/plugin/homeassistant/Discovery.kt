@@ -13,7 +13,6 @@ import org.avmedia.smartsync.plugin.api.WatchValues
 class Discovery(
     private val topics: Topics,
     private val pluginVersion: String,
-    private val expireAfterSec: Int? = null,
     /** Health entities too ("Share health data with Home Assistant"). */
     private val health: Boolean = true,
 ) {
@@ -45,7 +44,6 @@ class Discovery(
                 "entity_category" to e.category,
             )
             if (e.component == "binary_sensor") { extra["payload_on"] = SettingValue.ON; extra["payload_off"] = SettingValue.OFF }
-            if (expireAfterSec != null) extra["expire_after"] = expireAfterSec
             // Only read on first discovery: the id the mobile app integration used ([ValueEntity.entityId]).
             extra["default_entity_id"] = Entities.defaultEntityId(e, watch.name)
             put(e.component, e.obj, e.name, extra)

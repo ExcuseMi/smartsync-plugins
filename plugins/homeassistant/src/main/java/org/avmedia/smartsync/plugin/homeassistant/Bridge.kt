@@ -27,13 +27,18 @@ class Bridge(
     pluginVersion: String,
     private val zone: () -> ZoneId = ZoneId::systemDefault,
     private val today: () -> LocalDate = LocalDate::now,
+    /** Runs the block after the delay in ms, off the caller's thread (the plugin's scope); tests run it by hand. */
     private val later: (Long, () -> Unit) -> Unit = { _, _ -> },
     private val log: (String) -> Unit,
 ) {
     val topics = Topics(config.baseTopic, config.discoveryPrefix)
 
-    /** Without a last will (through Home Assistant) the sensors expire unless [heartbeat] sends them again in time. */
-    private val discovery = Discovery(topics, pluginVersion, expireAfterSec = if (link.hasWill) null else EXPIRE_AFTER_SEC, health = config.shareHealth)
+    /**
+     * No expire_after: a sensor with it starts unavailable and is set unavailable again by every change of its config,
+     * and a retained state does not undo that (2026-11-24: 38 sensors unavailable after a plugin update). A value the
+     * watch never gave shows unknown; the app's absence shows through the availability topics.
+     */
+    private val discovery = Discovery(topics, pluginVersion, health = config.shareHealth)
     private val lock = Any()
 
     /** What this connection published per topic: the broker keeps retained messages, so equal ones are not sent again. */
@@ -75,11 +80,22 @@ class Bridge(
         host.watches().forEach { syncLocked(it) }
     }
 
-    /** States and availability again although unchanged, so expiring sensors stay available while the app runs. */
+    /** States and availability again although unchanged: repairs anything Home Assistant lost while the app runs. */
     fun heartbeat() = synchronized(lock) {
         sent.keys.removeAll { !it.endsWith("/config") }
         publish(topics.bridgeAvailability, ONLINE, retain = true)
         host.watches().forEach { syncLocked(it) }
+    }
+
+    /**
+     * [watch]'s states again although unchanged. Runs [ANNOUNCE_DELAY_MS] after its discovery configs changed: Home
+     * Assistant sets up or updates the entities from them first, and a state sent before that is lost to them.
+     */
+    fun announce(watch: WatchId) = synchronized(lock) {
+        val root = topics.availability(watch).removeSuffix("availability")
+        sent.keys.removeAll { it.startsWith(root) }
+        host.watches().firstOrNull { it.id == watch }?.let { syncLocked(it) }
+        Unit
     }
 
     /** A planned stop: the bridge and every watch go offline (through Home Assistant there is no last will to do it). */
@@ -217,12 +233,26 @@ class Bridge(
         desired.putAll(states(w, values, catalog))
         val node = Topics.node(w.id)
         val before = loadTopics(node)
+        // A value missing now (not read yet since an app restart) keeps its retained last value: only the topics of
+        // entities the watch no longer has are emptied.
+        val kept = before.filter { it in stateTopics(w, catalog) && it !in desired.keys }
+        val wanted = desired.keys + kept
         var ok = true
-        for (t in before - desired.keys) ok = publish(t, "", retain = true) && ok
-        for ((t, p) in desired) ok = publish(t, p, retain = true) && ok
-        if (ok && before != desired.keys) saveTopics(node, desired.keys)
-        else if (!ok) saveTopics(node, before + desired.keys)
+        for (t in before - wanted) ok = publish(t, "", retain = true) && ok
+        var configChanged = false
+        for ((t, p) in desired) {
+            if (t.endsWith("/config") && sent[t] != p) configChanged = true
+            ok = publish(t, p, retain = true) && ok
+        }
+        if (ok && before != wanted) saveTopics(node, wanted)
+        else if (!ok) saveTopics(node, before + wanted)
+        if (configChanged) later(ANNOUNCE_DELAY_MS) { announce(w.id) }
     }
+
+    /** Every state topic [w] has an entity for, with or without a value now. */
+    private fun stateTopics(w: PairedWatch, catalog: List<SettingInfo>): Set<String> =
+        Entities.valuesFor(w.capabilities, config.shareHealth).map { topics.state(w.id, it.obj) }.toSet() +
+            catalog.map { topics.settingState(w.id, it.key) }
 
     /**
      * A watch that keeps its link up (ALWAYS_CONNECTED) is unavailable while disconnected; one that connects by its
@@ -320,9 +350,10 @@ class Bridge(
         /** Plugin storage key per watch node: the history topics published, with a hash of each payload. */
         const val HISTORY_KEY = "history."
 
-        /** Sensors expire after this without a message (through Home Assistant); [HEARTBEAT_MIN] keeps them fresh. */
+        /** Through Home Assistant: every state again this often ([heartbeat]). */
         const val HEARTBEAT_MIN = 30L
-        const val EXPIRE_AFTER_SEC = (HEARTBEAT_MIN * 2 * 60 + 300).toInt()
+
+        /** How long Home Assistant gets to set up the entities of new or changed configs before the states follow. */
         const val ANNOUNCE_DELAY_MS = 5_000L
         const val MAX_ECHO = 60
         const val NOTIFY_KEEP_MILLIS = 3_600_000L

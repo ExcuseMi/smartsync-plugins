@@ -95,8 +95,8 @@ object Entities {
         ValueEntity("workout_sport", "Last workout", "workout.sport", Capability.WORKOUTS, icon = "mdi:run", entityId = "last_workout"),
         ValueEntity("workout_start", "Last workout start", "workout.start", Capability.WORKOUTS, deviceClass = "timestamp", icon = "mdi:clock-start", entityId = "last_workout_start", convert = Convert.TIMESTAMP),
         ValueEntity("workout_duration", "Last workout duration", "workout.duration_seconds", Capability.WORKOUTS, deviceClass = "duration", unit = "min", icon = "mdi:timer", entityId = "last_workout_duration", convert = Convert.SECONDS_TO_MINUTES),
-        ValueEntity("workout_distance", "Last workout distance (unconfirmed unit, likely km)", "workout.distance", Capability.WORKOUTS, icon = "mdi:map-marker-distance", entityId = "last_workout_distance_unconfirmed_unit_likely_km"),
-        ValueEntity("workout_kcal", "Last workout energy (unconfirmed)", "workout.kcal", Capability.WORKOUTS, unit = "kcal", icon = "mdi:fire", entityId = "last_workout_energy_unconfirmed"),
+        ValueEntity("workout_distance", "Last workout distance", "workout.distance", Capability.WORKOUTS, icon = "mdi:map-marker-distance", entityId = "last_workout_distance_unconfirmed_unit_likely_km"),
+        ValueEntity("workout_kcal", "Last workout energy", "workout.kcal", Capability.WORKOUTS, unit = "kcal", icon = "mdi:fire", entityId = "last_workout_energy_unconfirmed"),
         ValueEntity("workout_hr_avg", "Last workout average heart rate", "workout.hr_avg", Capability.WORKOUTS, unit = "bpm", icon = "mdi:heart-pulse", entityId = "last_workout_average_heart_rate"),
         ValueEntity("workout_hr_max", "Last workout max heart rate", "workout.hr_max", Capability.WORKOUTS, unit = "bpm", icon = "mdi:heart-pulse", entityId = "last_workout_max_heart_rate"),
     )

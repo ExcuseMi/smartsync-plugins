@@ -105,7 +105,7 @@ class HomeAssistantPlugin(
 
     /**
      * The host's periodic wake-up ([PluginNeeds.wakeEveryMinutes]), also in a process the app was stopped in: through
-     * Home Assistant the states again before the sensors expire, and the daily gap check of the statistics. Runs to the
+     * Home Assistant the states again, and the daily gap check of the statistics. Runs to the
      * end here: the host keeps the process until this returns.
      */
     private suspend fun wake(b: Bridge) {
@@ -220,7 +220,7 @@ class HomeAssistantPlugin(
             }
         }) else null
         val l: MqttLink = if (through) HaLink { channel }.also { haLink = it } else linkFactory()
-        val b = Bridge(h, l, cfg, VERSION, log = logger)
+        val b = Bridge(h, l, cfg, VERSION, later = { ms, block -> sc.launch { delay(ms); block() } }, log = logger)
         channel = ch
         link = l
         bridge = b
@@ -281,7 +281,7 @@ class HomeAssistantPlugin(
         const val REPO = "https://github.com/ExcuseMi/smartsync-plugins"
 
         /** The plugin's version (homeassistant/build.gradle, tag v<version>). */
-        const val VERSION = "0.1.1"
+        const val VERSION = "0.1.2"
         const val NOT_SET_UP = "Not set up"
         const val DAY_MILLIS = 24 * 3_600_000L
 
@@ -290,7 +290,7 @@ class HomeAssistantPlugin(
         const val ON = "on"
         const val DASHBOARD_DELAY_MS = 15_000L
 
-        /** Through Home Assistant the sensors expire without a message: woken in time to send them again. */
+        /** Through Home Assistant: woken to send the states again ([Bridge.heartbeat]). */
         const val HEARTBEAT_WAKE_MIN = Bridge.HEARTBEAT_MIN.toInt()
 
         /** Direct to a broker with the Home Assistant API: woken a few times a day for the daily gap check. */

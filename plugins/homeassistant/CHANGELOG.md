@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+- Entities keep their last value while the app is online: no sensor expires any more (a sensor with expire_after went
+  unavailable on every config change, also after an app update), the states follow a changed config once Home
+  Assistant set the entities up, and a value not read yet since an app restart keeps its retained state. A value the
+  watch never gave shows unknown.
+- "Last workout distance" and "Last workout energy" without "unconfirmed" (km and kcal confirmed); entity ids stay.
+
 ## 0.1.1
 - A re-paired watch (new Bluetooth address) leaves Home Assistant under its old id: the old device's topics are
   emptied and the watch shows up under the new id.

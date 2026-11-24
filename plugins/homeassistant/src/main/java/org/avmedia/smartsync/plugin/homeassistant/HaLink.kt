@@ -3,7 +3,7 @@ package org.avmedia.smartsync.plugin.homeassistant
 /**
  * [MqttLink] through Home Assistant: publishes with the `mqtt.publish` action and receives with `mqtt/subscribe`, so
  * the broker can stay inside the home network. There is no last will: the plugin publishes availability itself and
- * the sensors expire ([Bridge], [Discovery]).
+ * the plugin sends its goodbye on a planned stop ([Bridge.goingOffline]).
  */
 class HaLink(private val channel: () -> HaChannel?) : MqttLink {
     private var listener: MqttLink.Listener? = null
