@@ -138,7 +138,6 @@ class EventMapper(private val zone: ZoneId = ZoneId.systemDefault()) {
 
         /** Whether [fired] meets event configuration [config]. */
         fun matches(config: EventConfig, fired: Fired): Boolean {
-            if (config.kind != EventKind.WORKOUT) return false // red-first stub
             val d = fired.data
             val watch = config.watch
             if (watch is WatchChoice.Specific && d[F.WATCH] != watch.id.key) return false

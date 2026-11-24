@@ -10,7 +10,6 @@ object States {
     data class Answer(val holds: Boolean?, val variables: Map<String, String>)
 
     fun query(config: EventConfig, watches: List<PairedWatch>, values: (WatchId) -> WatchValues): Answer {
-        if (config.state) return Answer(null, emptyMap()) // red-first stub
         val target = when (val w = config.watch) {
             WatchChoice.Connected -> watches.firstOrNull { it.connected }
             is WatchChoice.Specific -> watches.firstOrNull { it.id == w.id }

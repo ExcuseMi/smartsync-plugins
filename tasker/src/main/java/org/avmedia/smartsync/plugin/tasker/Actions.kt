@@ -16,7 +16,7 @@ object SettingOffer {
     private fun isAlarmOrTimer(s: SettingInfo) = s.key.contains("alarm") || s.key.contains("timer")
 
     /** The rows of [catalog] (the chosen watch's own, [PluginHost.settingCatalog]) an action of [kind] lists. */
-    fun offered(catalog: List<SettingInfo>, kind: ActionKind): List<SettingInfo> = if (kind != ActionKind.READ) catalog else when (kind) { // red-first stub
+    fun offered(catalog: List<SettingInfo>, kind: ActionKind): List<SettingInfo> = when (kind) {
         ActionKind.SETTING -> catalog.filterNot(::isAlarmOrTimer)
         ActionKind.ALARM -> catalog.filter(::isAlarmOrTimer)
         else -> emptyList()
@@ -73,7 +73,6 @@ class ActionRunner(private val host: PluginHost) {
     }
 
     suspend fun run(config: ActionConfig): ActionOutcome {
-        if (config.kind != ActionKind.READ) return ActionOutcome.failed(FailReason.INTERNAL, "stub") // red-first stub
         val watch = target(config.watch)
             ?: return ActionOutcome.failed(FailReason.INVALID, if (config.watch is WatchChoice.Specific) "${config.watch.label} is not paired" else "no watch paired")
         val result: PluginResult<Delivered> = when (config.kind) {
