@@ -1,6 +1,9 @@
 # JitPack builds every module of the tag (plugin-api-v<version>, homeassistant-v<version>, ...); each is
 # com.github.ExcuseMi.smartsync-plugins:<module>:<tag>.
+# The daemon JVM criteria (gradle/gradle-daemon-jvm.properties, JetBrains 21) cannot be downloaded on JitPack: there the
+# build runs on JitPack's own JDK 21.
 jdk:
   - openjdk21
 install:
+  - rm -f gradle/gradle-daemon-jvm.properties
   - ./gradlew --no-daemon publishToMavenLocal -x lint
