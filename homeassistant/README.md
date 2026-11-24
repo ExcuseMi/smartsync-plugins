@@ -4,8 +4,8 @@ Your watch in Home Assistant, with live values, real controls and history.
 
 Adds each watch as a device in Home Assistant: battery, steps, heart rate, sleep, workouts and connection as sensors;
 the watch face, auto light, heart rate mode, alarms and bedtime as controls you can change from a dashboard or an
-automation; notifications to the watch; the watch button as a trigger; hourly steps and heart rate as long-term
-statistics. It uses MQTT discovery and works through your Home Assistant or a direct MQTT broker. As a bonus, the same
+automation; notifications to the watch; the watch button as a trigger; history in Home Assistant's own long-term
+statistics, with the hours it missed filled from the watch. It uses MQTT discovery and works through your Home Assistant or a direct MQTT broker. As a bonus, the same
 MQTT topics work with openHAB, Node-RED, ioBroker and anything else that speaks MQTT.
 
 ## Contents
@@ -112,12 +112,15 @@ health sensors; the watch face options are the ones of that model). Discovery:
 | notify | send a notification to the watch ([MQTT notify](https://www.home-assistant.io/integrations/notify.mqtt/)): title and message |
 | event + device trigger | the watch button ([MQTT event](https://www.home-assistant.io/integrations/event.mqtt/), [device trigger](https://www.home-assistant.io/integrations/device_trigger.mqtt/)) |
 | button | read the values now |
-| statistics | `smartsync:<watch>_steps_hourly` (sum per hour) and `smartsync:<watch>_heart_rate_hourly` (mean, min, max) |
 
-The statistics show in a [statistics graph card](https://www.home-assistant.io/dashboards/statistics-graph/), not on
-the live sensors. Each finished hour is imported once with its real UTC hour; missing hours (Home Assistant was down)
-are found by asking Home Assistant what it has for the last 7 days and are filled from the app's history. The live
-sensors carry only the values of now.
+History: the sensors have a state class (steps today `total_increasing`, heart rate, battery and temperature
+`measurement`), so Home Assistant keeps their long-term statistics itself; see them in a
+[statistics graph card](https://www.home-assistant.io/dashboards/statistics-graph/). With the Home Assistant address and
+token set, the plugin also fills the hours Home Assistant has no statistics for (phone off, watch out of range, Home
+Assistant down): it asks Home Assistant what it has for the last 7 days and imports only the missing hours, from the
+watch's history, into the same statistic of the sensor (steps per hour, heart rate mean, min and max). Only gaps
+between two recorded hours are filled, never above the next recorded sum, so Home Assistant's own numbers stay as
+they are. Without the token, history is what Home Assistant recorded live.
 
 A notification with more fields (an app label and a type: message, calendar, email, call, generic) can be published
 to `smartsync/<watch>/set/notify` as JSON: `{"title": "Door", "message": "Front door opened", "app": "Alarm", "type": "message"}`.
@@ -143,8 +146,8 @@ History topics keep the last 7 days; a day is published again only when it chang
 
 ## When the connection is gone
 - Values and states that could not be sent (no network, Home Assistant or the broker down) are sent when the
-  connection is back: the plugin publishes every watch's current values again after each reconnection, and the
-  statistics gap check fills the missed hours. Button presses are kept (the last 50) and sent then too.
+  connection is back: the plugin publishes every watch's current values again after each reconnection, and with the
+  token the gap check fills the hours Home Assistant missed. Button presses are kept (the last 50) and sent then too.
 - Notifications and commands are live: they need the connection at that moment. A command sent while the app was
   away is lost; after the reconnection the controls show the watch's real values again. A refused or failed change
   shows the real value at once.

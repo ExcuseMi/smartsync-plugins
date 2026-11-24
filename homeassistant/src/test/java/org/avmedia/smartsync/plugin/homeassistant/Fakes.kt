@@ -170,13 +170,18 @@ object Watches {
     fun config() = BrokerConfig(mode = ConnectMode.DIRECT, host = "broker.lan", port = 1883, username = "smartsync", password = CONFIG_PASSWORD, clientId = "smartsync-test")
 }
 
-/** Home Assistant's websocket API: records what is sent and keeps the statistics hours it was given. */
+/** Home Assistant's websocket API: records what is sent, keeps statistics rows by hour, knows the plugin's entities. */
 class FakeChannel(var isReady: Boolean = true) : HaChannel {
     override val ready: Boolean get() = isReady
     val calls = mutableListOf<Map<String, Any?>>()
     val sent = mutableListOf<Map<String, Any?>>()
     val subs = mutableListOf<Pair<Map<String, Any?>, (Map<String, Any?>) -> Unit>>()
-    val present = HashMap<String, MutableSet<Instant>>()
+
+    /** Statistic id to hour start to its row (sum or mean). */
+    val stats = HashMap<String, MutableMap<Instant, Map<String, Any?>>>()
+
+    /** The entity registry: unique id to entity id, all from the mqtt platform. */
+    val entities = LinkedHashMap<String, String>()
 
     fun imports() = calls.filter { it["type"] == "recorder/import_statistics" }
 
@@ -184,12 +189,18 @@ class FakeChannel(var isReady: Boolean = true) : HaChannel {
     override suspend fun call(message: Map<String, Any?>): HaReply {
         calls += message
         return when (message["type"]) {
-            "recorder/statistics_during_period" ->
-                HaReply(true, present.mapValues { (_, v) -> v.sorted().map { mapOf("start" to it.toEpochMilli().toDouble(), "sum" to 1) } })
+            "config/entity_registry/list" ->
+                HaReply(true, entities.map { (u, e) -> mapOf("entity_id" to e, "unique_id" to u, "platform" to "mqtt") } + mapOf("entity_id" to "light.x", "unique_id" to "x", "platform" to "hue"))
+            "recorder/statistics_during_period" -> {
+                val ids = message["statistic_ids"] as List<String>
+                HaReply(true, ids.filter { it in stats }.associateWith { id ->
+                    stats.getValue(id).toSortedMap().map { (t, r) -> mapOf("start" to t.toEpochMilli().toDouble()) + r }
+                })
+            }
             "recorder/import_statistics" -> {
                 val id = (message["metadata"] as Map<String, Any?>)["statistic_id"] as String
                 (message["stats"] as List<Map<String, Any?>>).forEach {
-                    present.getOrPut(id) { mutableSetOf() } += OffsetDateTime.parse(it["start"] as String).toInstant()
+                    stats.getOrPut(id) { mutableMapOf() }[OffsetDateTime.parse(it["start"] as String).toInstant()] = it - "start"
                 }
                 HaReply(true)
             }

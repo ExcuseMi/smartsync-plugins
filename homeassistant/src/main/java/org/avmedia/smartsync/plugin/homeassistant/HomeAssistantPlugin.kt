@@ -138,7 +138,7 @@ class HomeAssistantPlugin(
             }
         }) else null
         val l: MqttLink = if (through) HaLink { channel }.also { haLink = it } else linkFactory()
-        val b = Bridge(h, l, cfg, VERSION, logger)
+        val b = Bridge(h, l, cfg, VERSION, log = logger)
         channel = ch
         link = l
         bridge = b

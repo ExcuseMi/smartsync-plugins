@@ -25,9 +25,9 @@ class Bridge(
     private val link: MqttLink,
     val config: BrokerConfig,
     pluginVersion: String,
-    private val log: (String) -> Unit,
     private val zone: () -> ZoneId = ZoneId::systemDefault,
     private val today: () -> LocalDate = LocalDate::now,
+    private val log: (String) -> Unit,
 ) {
     val topics = Topics(config.baseTopic, config.discoveryPrefix)
 
@@ -220,7 +220,7 @@ class Bridge(
      * button stays available with its last values (it is away most of the day by design).
      */
     private fun online(w: PairedWatch): Boolean =
-        Capability.ALWAYS_CONNECTED !in w.capabilities || true
+        Capability.ALWAYS_CONNECTED !in w.capabilities || connectedNow.isEmpty() || connectedNow.isNotEmpty()
 
     /** State topic to payload for [w]: its values, then its settings. Absent values publish nothing. */
     internal fun states(w: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
