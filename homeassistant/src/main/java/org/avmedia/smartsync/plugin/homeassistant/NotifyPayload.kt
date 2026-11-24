@@ -6,7 +6,8 @@ import org.avmedia.smartsync.plugin.api.WatchNotification
 /**
  * A notification message on `<base>/<watch>/set/notify`: JSON with `message` and the optional `title`, `app` (the
  * source line the watch shows) and `type` (message, calendar, email, call, generic), or plain text (a first line and
- * more lines: the first is the title).
+ * more lines: the first is the title). `app` and `type` may also come in a `data` object, as the mobile app's notify
+ * action had them; a top-level field wins.
  */
 object NotifyPayload {
     const val MAX_TITLE = 60
@@ -22,8 +23,11 @@ object NotifyPayload {
             val message = (json["message"] as? String)?.trim().orEmpty()
             val title = (json["title"] as? String)?.trim().orEmpty()
             if (message.isEmpty() && title.isEmpty()) return null
-            val app = (json["app"] as? String)?.trim()?.takeIf { it.isNotEmpty() } ?: DEFAULT_APP
-            val kind = NotificationKind.entries.firstOrNull { it.name.equals((json["type"] as? String)?.trim(), ignoreCase = true) }
+            val data = json["data"] as? Map<*, *>
+            fun field(name: String): String? = sequenceOf(json[name], data?.get(name))
+                .mapNotNull { (it as? String)?.trim()?.takeIf { v -> v.isNotEmpty() } }.firstOrNull()
+            val app = field("app") ?: DEFAULT_APP
+            val kind = NotificationKind.entries.firstOrNull { it.name.equals(field("type"), ignoreCase = true) }
                 ?: NotificationKind.GENERIC
             return WatchNotification(kind, app.take(MAX_APP), title.take(MAX_TITLE), message.take(MAX_TEXT))
         }

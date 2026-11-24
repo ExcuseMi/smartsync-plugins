@@ -97,6 +97,7 @@ class HomeAssistantPlugin(
             is WatchEvent.WorkoutStored -> { b.sync(event.watch); history(event.watch, null) }
             is WatchEvent.ButtonPressed -> b.buttonPressed(event.watch)
             is WatchEvent.WatchRemoved -> { b.removeWatch(event.watch); scope?.launch { dashboards.remove(event.watch) } }
+            is WatchEvent.WatchRePaired -> { b.rePaired(event.from, event.watch); scope?.launch { dashboards.remove(event.from) }; dashboardSoon(event.watch) }
             is WatchEvent.Wake -> wake(b)
             else -> Unit
         }

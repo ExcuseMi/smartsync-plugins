@@ -118,6 +118,14 @@ class Bridge(
         clearNode(Topics.node(watch))
     }
 
+    /** [from] re-paired as [to]: Home Assistant drops the device of the old id and gets the watch under the new one. */
+    fun rePaired(from: WatchId, to: WatchId) = synchronized(lock) {
+        connectedNow.remove(from)
+        clearNode(Topics.node(from))
+        host.watches().firstOrNull { it.id == to }?.let { syncLocked(it) }
+        Unit
+    }
+
     // Commands
 
     suspend fun handle(topic: String, payload: String) {

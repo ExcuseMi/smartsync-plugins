@@ -126,6 +126,22 @@ they are. Without the token, history is what Home Assistant recorded live.
 
 A notification with more fields (an app label and a type: message, calendar, email, call, generic) can be published
 to `smartsync/<watch>/set/notify` as JSON: `{"title": "Door", "message": "Front door opened", "app": "Alarm", "type": "message"}`.
+`app` and `type` may also sit in a `data` object, as the mobile app's notify action had them (a top-level field wins).
+In an automation:
+
+```yaml
+action: mqtt.publish
+data:
+  topic: smartsync/gshock-aabbccddeeff/set/notify
+  payload: >-
+    {{ {"title": "Door", "message": "Front door opened", "data": {"app": "Alarm", "type": "message"}} | tojson }}
+```
+
+The notify entity (`notify.send_message`) sends only the title and message; the app label is then "Home Assistant"
+and the type generic.
+
+A re-paired watch (a new Bluetooth address) moves to its new id: the device of the old id is emptied, so Home
+Assistant drops it, and the watch shows up under the new id.
 
 ## Topics without Home Assistant
 `<watch>` is the watch's id, for example `gshock-aabbccddeeff`. Values are retained.
@@ -173,7 +189,7 @@ The sensors ask for the entity ids the app's mobile app integration used (`defau
 `sensor.casio_gbx_h5600_steps_today`, `binary_sensor.casio_gbx_h5600_watch_connected`), with the same unit and state
 class, so dashboards, automations and long-term statistics carry on. Home Assistant gives an id only when the entity
 is first discovered, and adds `_2` while the old one still exists, so the order matters:
-1. Turn off the in-app Home Assistant integration and delete its mobile app device in Home Assistant.
+1. Delete the old mobile app device in Home Assistant (the app no longer has that integration).
 2. Turn on this plugin. Its entities take the old ids.
 
 Not carried over: the old read-only settings sensors (watch face, bedtime, smart alarm, heart rate measurement,
