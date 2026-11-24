@@ -1,5 +1,5 @@
-# Home Assistant & MQTT plugin for G-Shock Smart Sync
+# Home Assistant plugin for G-Shock Smart Sync
 
-Your watch in Home Assistant, with live values and real controls. Works with any MQTT broker.
+Your watch in Home Assistant, with live values, real controls and history.
 
 Setup guide: see the sections below (written with the plugin's first release).
