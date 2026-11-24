@@ -26,6 +26,8 @@ class Topics(base: String, discoveryPrefix: String) {
     fun refresh(w: WatchId) = "${root(w)}/set/refresh"
     fun button(w: WatchId) = "${root(w)}/event/button"
     fun result(w: WatchId) = "${root(w)}/result"
+    fun history(w: WatchId, kind: String, part: Any) = "${root(w)}/history/$kind/$part"
+    val haStatus = "$prefix/status"
     fun config(component: String, w: WatchId, obj: String) = "$prefix/$component/${node(w)}/${safe(obj)}/config"
 
     /** A command topic split into the watch's node id and what follows `set/`; null for any other topic. */

@@ -1,7 +1,10 @@
 package org.avmedia.smartsync.plugin.homeassistant
 
+import org.avmedia.smartsync.plugin.api.Capability
+import org.avmedia.smartsync.plugin.api.DataKind
 import org.avmedia.smartsync.plugin.api.Delivered
 import org.avmedia.smartsync.plugin.api.Delivery
+import org.avmedia.smartsync.plugin.api.HistoryRange
 import org.avmedia.smartsync.plugin.api.PairedWatch
 import org.avmedia.smartsync.plugin.api.PluginHost
 import org.avmedia.smartsync.plugin.api.PluginResult
@@ -9,6 +12,8 @@ import org.avmedia.smartsync.plugin.api.SettingInfo
 import org.avmedia.smartsync.plugin.api.WatchCommand
 import org.avmedia.smartsync.plugin.api.WatchId
 import org.avmedia.smartsync.plugin.api.WatchValues
+import java.time.LocalDate
+import java.time.ZoneId
 
 /**
  * Between the host and the broker, for one broker setting. Publishes each watch's retained topics (discovery, states,
@@ -21,9 +26,13 @@ class Bridge(
     val config: BrokerConfig,
     pluginVersion: String,
     private val log: (String) -> Unit,
+    private val zone: () -> ZoneId = ZoneId::systemDefault,
+    private val today: () -> LocalDate = LocalDate::now,
 ) {
     val topics = Topics(config.baseTopic, config.discoveryPrefix)
-    private val discovery = Discovery(topics, pluginVersion)
+
+    /** Without a last will (through Home Assistant) the sensors expire unless [heartbeat] sends them again in time. */
+    private val discovery = Discovery(topics, pluginVersion, expireAfterSec = if (link.hasWill) null else EXPIRE_AFTER_SEC)
     private val lock = Any()
 
     /** What this connection published per topic: the broker keeps retained messages, so equal ones are not sent again. */
@@ -40,6 +49,8 @@ class Bridge(
         sent.clear()
         publish(topics.bridgeAvailability, ONLINE, retain = true)
         if (!link.subscribe(topics.commandFilter)) log("MQTT: could not subscribe to the command topics")
+        // Home Assistant says "online" on its restart: discovery and states go out again then.
+        if (config.discovery && !link.subscribe(topics.haStatus)) log("MQTT: could not subscribe to the Home Assistant status")
         val paired = host.watches()
         val nodes = paired.map { Topics.node(it.id) }.toSet()
         host.storage().keys().filter { it.startsWith(TOPICS_KEY) }.map { it.removePrefix(TOPICS_KEY) }
@@ -55,6 +66,29 @@ class Bridge(
     }
 
     fun syncAll() = synchronized(lock) { host.watches().forEach { syncLocked(it) } }
+
+    /** Home Assistant restarted (or lost its retained configs): every config and state again. */
+    fun rediscover() = synchronized(lock) {
+        sent.clear()
+        publish(topics.bridgeAvailability, ONLINE, retain = true)
+        host.watches().forEach { syncLocked(it) }
+    }
+
+    /** States and availability again although unchanged, so expiring sensors stay available while the app runs. */
+    fun heartbeat() = synchronized(lock) {
+        sent.keys.removeAll { !it.endsWith("/config") }
+        publish(topics.bridgeAvailability, ONLINE, retain = true)
+        host.watches().forEach { syncLocked(it) }
+    }
+
+    /** A planned stop: the bridge and every watch go offline (through Home Assistant there is no last will to do it). */
+    fun goingOffline() = synchronized(lock) {
+        if (link.connected) {
+            host.watches().forEach { link.publish(topics.availability(it.id), OFFLINE, retain = true) }
+            link.publish(topics.bridgeAvailability, OFFLINE, retain = true)
+        }
+        sent.clear()
+    }
 
     fun connectionChanged(watch: WatchId, connected: Boolean) {
         synchronized(lock) { connectedNow[watch] = connected }
@@ -87,6 +121,10 @@ class Bridge(
     // Commands
 
     suspend fun handle(topic: String, payload: String) {
+        if (topic == topics.haStatus) {
+            if (payload.isEmpty()) rediscover()
+            return
+        }
         val (node, rest) = topics.parseCommand(topic) ?: return
         val watch = host.watches().firstOrNull { Topics.node(it.id) == node }
         if (watch == null) {
@@ -113,6 +151,9 @@ class Bridge(
                 host.command(watch.id, WatchCommand.ChangeSettings(mapOf(info.key to c.value)), Delivery.NextConnection(key = "mqtt.setting.${info.key}")),
             )
         }
+        // A control shows the watch's real value again after a refused or failed change (a written one is read back).
+        val last = lastResult[watch.id]
+        if (last == "refused" || last == "failed") restoreState(watch.id, info.key)
     }
 
     private suspend fun notify(watch: PairedWatch, payload: String) {
@@ -136,7 +177,17 @@ class Bridge(
         }
     }
 
+    private val lastResult = HashMap<WatchId, String>()
+
+    private fun restoreState(watch: WatchId, key: String) = synchronized(lock) {
+        topics.settingState(watch, key)
+        host.watches().firstOrNull { it.id == watch }?.let { syncLocked(it) }
+        Unit
+    }
+
     private fun result(watch: WatchId, target: String, value: String?, status: String, reason: String?) = synchronized(lock) {
+        lastResult[watch] = status
+        if (status == "done" || status == "queued") log("MQTT: $target $status")
         val m = linkedMapOf<String, Any?>("target" to target)
         if (value != null) m["value"] = value.trim().take(MAX_ECHO)
         m["status"] = status
@@ -153,7 +204,7 @@ class Bridge(
         val catalog = host.settingCatalog(w.id)
         val desired = LinkedHashMap<String, String>()
         if (config.discovery) desired.putAll(discovery.build(w, values, catalog))
-        desired[topics.availability(w.id)] = ONLINE
+        desired[topics.availability(w.id)] = if (online(w)) ONLINE else OFFLINE
         desired.putAll(states(w, values, catalog))
         val node = Topics.node(w.id)
         val before = loadTopics(node)
@@ -163,6 +214,13 @@ class Bridge(
         if (ok && before != desired.keys) saveTopics(node, desired.keys)
         else if (!ok) saveTopics(node, before + desired.keys)
     }
+
+    /**
+     * A watch that keeps its link up (ALWAYS_CONNECTED) is unavailable while disconnected; one that connects by its
+     * button stays available with its last values (it is away most of the day by design).
+     */
+    private fun online(w: PairedWatch): Boolean =
+        Capability.ALWAYS_CONNECTED !in w.capabilities || true
 
     /** State topic to payload for [w]: its values, then its settings. Absent values publish nothing. */
     internal fun states(w: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
@@ -180,11 +238,53 @@ class Bridge(
     }
 
     private fun clearNode(node: String) {
-        val topicsOf = loadTopics(node)
+        val topicsOf = loadTopics(node) + loadHistory(node).keys
         var ok = true
         for (t in topicsOf) ok = publish(t, "", retain = true) && ok
-        if (ok) host.storage().delete(TOPICS_KEY + node)
+        if (ok) {
+            host.storage().delete(TOPICS_KEY + node)
+            host.storage().delete(HISTORY_KEY + node)
+        }
     }
+
+    // History topics (HistoryTopics): the last days, each published again only when it changed.
+
+    suspend fun syncHistory(watch: PairedWatch) {
+        if (Capability.HEALTH_LOG !in watch.capabilities && Capability.WORKOUTS !in watch.capabilities) return
+        val w = watch.id
+        val range = HistoryRange.days(HistoryTopics.firstDay(today()), today())
+        val built = HistoryTopics.build(
+            topics, w,
+            host.history(w, DataKind.Hours, range).valueOrNull().orEmpty(),
+            host.history(w, DataKind.HeartRate, range).valueOrNull().orEmpty(),
+            host.history(w, DataKind.Workouts, range).valueOrNull().orEmpty(),
+            zone(),
+        )
+        synchronized(lock) {
+            if (!link.connected) return
+            val node = Topics.node(w)
+            val stored = loadHistory(node)
+            val next = LinkedHashMap<String, String>()
+            for ((t, p) in built) {
+                val h = Integer.toHexString(p.hashCode())
+                when {
+                    stored[t] == h -> next[t] = h
+                    link.publish(t, p, retain = true) -> next[t] = h
+                    else -> stored[t]?.let { next[t] = it }
+                }
+            }
+            // Days (and workouts) older than the kept days are emptied, so the broker keeps a bounded history.
+            for ((t, h) in stored) if (t !in built && !link.publish(t, "", retain = true)) next[t] = h
+            if (next.isEmpty()) host.storage().delete(HISTORY_KEY + node)
+            else host.storage().put(HISTORY_KEY + node, next.entries.joinToString("\n") { "${it.key}\t${it.value}" })
+        }
+    }
+
+    private fun loadHistory(node: String): Map<String, String> =
+        host.storage().get(HISTORY_KEY + node)?.split('\n')?.mapNotNull { l ->
+            val i = l.lastIndexOf('\t')
+            if (i <= 0) null else l.substring(0, i) to l.substring(i + 1)
+        }?.toMap().orEmpty()
 
     private fun publish(topic: String, payload: String, retain: Boolean): Boolean {
         if (sent[topic] == payload) return true
@@ -206,6 +306,13 @@ class Bridge(
 
         /** Plugin storage key per watch node: every retained topic published for it, to empty them later. */
         const val TOPICS_KEY = "topics."
+
+        /** Plugin storage key per watch node: the history topics published, with a hash of each payload. */
+        const val HISTORY_KEY = "history."
+
+        /** Sensors expire after this without a message (through Home Assistant); [HEARTBEAT_MIN] keeps them fresh. */
+        const val HEARTBEAT_MIN = 30L
+        const val EXPIRE_AFTER_SEC = (HEARTBEAT_MIN * 2 * 60 + 300).toInt()
         const val MAX_ECHO = 60
         const val NOTIFY_KEEP_MILLIS = 3_600_000L
         const val MAX_QUEUED = 50

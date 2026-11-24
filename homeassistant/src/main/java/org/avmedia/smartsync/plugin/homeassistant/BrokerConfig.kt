@@ -24,11 +24,25 @@ enum class BrokerTransport(val scheme: String, val tls: Boolean, val websocket: 
     }
 }
 
+/** How the plugin reaches the broker. */
+enum class ConnectMode(val wire: String) {
+    /** Through Home Assistant's websocket API (`mqtt.publish`, `mqtt/subscribe`): works wherever Home Assistant is reachable. */
+    THROUGH_HA("through_ha"),
+
+    /** Straight to an MQTT broker (tcp, ssl, ws, wss): for other systems or a LAN-only setup. */
+    DIRECT("direct"),
+}
+
 /**
- * The broker settings, kept in the plugin's storage. The password is a secret: [toString] masks it and [scrub] takes
- * it out of any text (an error message) before that text reaches a log line or the status.
+ * The plugin's settings, kept in its storage. The password and the token are secrets: [toString] masks them and
+ * [scrub] takes them out of any text (an error message) before that text reaches a log line or the status.
  */
 data class BrokerConfig(
+    val mode: ConnectMode = ConnectMode.THROUGH_HA,
+    /** Home Assistant's address (http or https), for [ConnectMode.THROUGH_HA] and for history in either mode. */
+    val haUrl: String = "",
+    /** A long-lived access token of an administrator (mqtt/subscribe and statistics need one). */
+    val haToken: String = "",
     val host: String = "",
     val port: Int = BrokerTransport.TCP.defaultPort,
     val tls: Boolean = false,
@@ -46,15 +60,48 @@ data class BrokerConfig(
     val transport: BrokerTransport get() = BrokerTransport.of(tls, websocket)
 
     /** What is wrong with these settings, null when they can be used. */
-    fun problem(): String? = when {
+    fun problem(): String? = haProblem() ?: if (mode == ConnectMode.THROUGH_HA) topicProblem() else brokerProblem()
+
+    /** Home Assistant URL and token: required through Home Assistant, optional (both or none) when direct. */
+    private fun haProblem(): String? = when {
+        mode == ConnectMode.THROUGH_HA && haUrl.isBlank() -> "No Home Assistant address"
+        haUrl.isBlank() && haToken.isBlank() -> null
+        haUrl.isBlank() -> "A token needs the Home Assistant address"
+        haWebsocketUrl() == null -> "The Home Assistant address must start with http:// or https://"
+        haToken.isBlank() -> "No Home Assistant token"
+        haToken.any { it.isWhitespace() } -> "The token has a space"
+        else -> null
+    }
+
+    private fun topicProblem(): String? = when {
+        !validTopicPart(baseTopic) -> "Base topic: letters, digits, _ - / only"
+        discovery && !validTopicPart(discoveryPrefix) -> "Discovery prefix: letters, digits, _ - / only"
+        else -> null
+    }
+
+    private fun brokerProblem(): String? = when {
         host.isBlank() -> "No broker address"
         host.any { it.isWhitespace() || it == '/' } -> "The broker address has a space or a slash"
         port !in 1..65535 -> "Port must be 1 to 65535"
         websocket && !path.startsWith("/") -> "The websocket path must start with /"
-        !validTopicPart(baseTopic) -> "Base topic: letters, digits, _ - / only"
-        discovery && !validTopicPart(discoveryPrefix) -> "Discovery prefix: letters, digits, _ - / only"
         password.isNotEmpty() && username.isBlank() -> "A password needs a user name"
-        else -> null
+        else -> topicProblem()
+    }
+
+    /** History (statistics) goes to Home Assistant: its address and token are set. */
+    val hasHaApi: Boolean get() = haUrl.isNotBlank() && haToken.isNotBlank() && haWebsocketUrl() != null
+
+    /** ws(s)://host[:port]/api/websocket for [haUrl]; null when it is not an http(s) address. */
+    fun haWebsocketUrl(): String? {
+        val u = haUrl.trim().trimEnd('/')
+        val rest = when {
+            u.startsWith("https://", ignoreCase = true) -> "wss://" + u.substring(8)
+            u.startsWith("http://", ignoreCase = true) -> "ws://" + u.substring(7)
+            else -> return null
+        }
+        val hostPart = rest.substringAfter("://").substringBefore('/')
+        if (hostPart.isEmpty() || rest.any { it.isWhitespace() }) return null
+        return "$rest/api/websocket"
     }
 
     val usable: Boolean get() = problem() == null
@@ -70,14 +117,18 @@ data class BrokerConfig(
     fun scrub(text: String?): String {
         var t = text.orEmpty()
         if (password.isNotEmpty()) t = t.replace(password, "***")
+        if (haToken.isNotEmpty()) t = t.replace(haToken, "***")
         return t
     }
 
     override fun toString(): String =
-        "BrokerConfig(${serverUri()}, user=${username.ifEmpty { "none" }}, password=${if (password.isEmpty()) "none" else "***"}, " +
+        "BrokerConfig(mode=${mode.wire}, ha=${haUrl.ifEmpty { "none" }}, token=${if (haToken.isEmpty()) "none" else "***"}, ${serverUri()}, user=${username.ifEmpty { "none" }}, password=${if (password.isEmpty()) "none" else "***"}, " +
             "clientId=$clientId, discovery=$discovery, discoveryPrefix=$discoveryPrefix, baseTopic=$baseTopic)"
 
     fun save(s: PluginStorage) {
+        s.put(KEY_MODE, mode.wire)
+        s.put(KEY_HA_URL, haUrl.trim())
+        if (haToken.isBlank()) s.delete(KEY_HA_TOKEN) else s.put(KEY_HA_TOKEN, haToken.trim())
         s.put(KEY_HOST, host.trim())
         s.put(KEY_PORT, port.toString())
         s.put(KEY_TLS, tls.toString())
@@ -111,6 +162,9 @@ data class BrokerConfig(
         const val DEFAULT_DISCOVERY_PREFIX = "homeassistant"
         const val DEFAULT_BASE_TOPIC = "smartsync"
 
+        const val KEY_MODE = "mode"
+        const val KEY_HA_URL = "ha.url"
+        const val KEY_HA_TOKEN = "ha.token"
         const val KEY_HOST = "broker.host"
         const val KEY_PORT = "broker.port"
         const val KEY_TLS = "broker.tls"
@@ -127,6 +181,9 @@ data class BrokerConfig(
             val tls = s.get(KEY_TLS) == "true"
             val ws = s.get(KEY_WS) == "true"
             return BrokerConfig(
+                mode = ConnectMode.entries.firstOrNull { it.wire == s.get(KEY_MODE) } ?: ConnectMode.THROUGH_HA,
+                haUrl = s.get(KEY_HA_URL).orEmpty(),
+                haToken = s.get(KEY_HA_TOKEN).orEmpty(),
                 host = s.get(KEY_HOST).orEmpty(),
                 port = s.get(KEY_PORT)?.toIntOrNull() ?: BrokerTransport.of(tls, ws).defaultPort,
                 tls = tls,

@@ -5,8 +5,10 @@ import org.avmedia.smartsync.plugin.api.Capability
 import org.avmedia.smartsync.plugin.api.DataKind
 import org.avmedia.smartsync.plugin.api.Delivered
 import org.avmedia.smartsync.plugin.api.Delivery
+import org.avmedia.smartsync.plugin.api.HeartRateSample
 import org.avmedia.smartsync.plugin.api.HistoryRange
 import org.avmedia.smartsync.plugin.api.HistoryRecord
+import org.avmedia.smartsync.plugin.api.HourRecord
 import org.avmedia.smartsync.plugin.api.PairedWatch
 import org.avmedia.smartsync.plugin.api.PluginHost
 import org.avmedia.smartsync.plugin.api.PluginNeeds
@@ -20,6 +22,9 @@ import org.avmedia.smartsync.plugin.api.WatchCommand
 import org.avmedia.smartsync.plugin.api.WatchId
 import org.avmedia.smartsync.plugin.api.WatchNotification
 import org.avmedia.smartsync.plugin.api.WatchValues
+import org.avmedia.smartsync.plugin.api.WorkoutRecord
+import java.time.Instant
+import java.time.OffsetDateTime
 
 class MemStorage : PluginStorage {
     val map = LinkedHashMap<String, String>()
@@ -81,8 +86,20 @@ class FakeHost : PluginHost {
     override fun settings(watch: WatchId) = SettingsSnapshot(watch, settingValues[watch].orEmpty().toMap(), 1L)
     override fun settingCatalog(watch: WatchId): List<SettingInfo> = catalogs[watch].orEmpty()
 
-    override suspend fun <T : HistoryRecord> history(watch: WatchId, kind: DataKind<T>, range: HistoryRange): PluginResult<List<T>> =
-        PluginResult.Ok(emptyList())
+    val hours = HashMap<WatchId, List<HourRecord>>()
+    val heartRate = HashMap<WatchId, List<HeartRateSample>>()
+    val workouts = HashMap<WatchId, List<WorkoutRecord>>()
+
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun <T : HistoryRecord> history(watch: WatchId, kind: DataKind<T>, range: HistoryRange): PluginResult<List<T>> {
+        val all: List<HistoryRecord> = when (kind) {
+            DataKind.Hours -> hours[watch].orEmpty().filter { range.contains(it.start) }
+            DataKind.HeartRate -> heartRate[watch].orEmpty().filter { range.contains(it.time) }
+            DataKind.Workouts -> workouts[watch].orEmpty().filter { range.contains(java.time.LocalDateTime.ofInstant(it.start, java.time.ZoneId.of("Europe/Brussels"))) }
+            else -> emptyList()
+        }
+        return PluginResult.Ok(all as List<T>)
+    }
 
     override fun storage(): PluginStorage = plugin
     override fun storage(watch: WatchId): PluginStorage = perWatch.getOrPut(watch) { MemStorage() }
@@ -97,7 +114,7 @@ class FakeHost : PluginHost {
 }
 
 /** A broker connection that records what is published. */
-class FakeLink(override var connected: Boolean = true) : MqttLink {
+class FakeLink(override var connected: Boolean = true, override val hasWill: Boolean = true) : MqttLink {
     data class Msg(val topic: String, val payload: String, val retain: Boolean)
 
     val published = mutableListOf<Msg>()
@@ -150,5 +167,40 @@ object Watches {
 
     const val CONFIG_PASSWORD = "s3cr3t-Pa55word"
 
-    fun config() = BrokerConfig(host = "broker.lan", port = 1883, username = "smartsync", password = CONFIG_PASSWORD, clientId = "smartsync-test")
+    fun config() = BrokerConfig(mode = ConnectMode.DIRECT, host = "broker.lan", port = 1883, username = "smartsync", password = CONFIG_PASSWORD, clientId = "smartsync-test")
+}
+
+/** Home Assistant's websocket API: records what is sent and keeps the statistics hours it was given. */
+class FakeChannel(var isReady: Boolean = true) : HaChannel {
+    override val ready: Boolean get() = isReady
+    val calls = mutableListOf<Map<String, Any?>>()
+    val sent = mutableListOf<Map<String, Any?>>()
+    val subs = mutableListOf<Pair<Map<String, Any?>, (Map<String, Any?>) -> Unit>>()
+    val present = HashMap<String, MutableSet<Instant>>()
+
+    fun imports() = calls.filter { it["type"] == "recorder/import_statistics" }
+
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun call(message: Map<String, Any?>): HaReply {
+        calls += message
+        return when (message["type"]) {
+            "recorder/statistics_during_period" ->
+                HaReply(true, present.mapValues { (_, v) -> v.sorted().map { mapOf("start" to it.toEpochMilli().toDouble(), "sum" to 1) } })
+            "recorder/import_statistics" -> {
+                val id = (message["metadata"] as Map<String, Any?>)["statistic_id"] as String
+                (message["stats"] as List<Map<String, Any?>>).forEach {
+                    present.getOrPut(id) { mutableSetOf() } += OffsetDateTime.parse(it["start"] as String).toInstant()
+                }
+                HaReply(true)
+            }
+            else -> HaReply.failed("unknown_command", "test")
+        }
+    }
+
+    override fun send(message: Map<String, Any?>): Boolean { sent += message; return isReady }
+
+    override fun subscribe(message: Map<String, Any?>, onEvent: (Map<String, Any?>) -> Unit): Boolean {
+        subs += message to onEvent
+        return isReady
+    }
 }

@@ -51,6 +51,7 @@ dependencies {
     testImplementation(project(':plugin-api'))
 
     implementation(libs.paho.mqttv3)
+    implementation(libs.okhttp)
     implementation(libs.timber)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.compose.runtime)

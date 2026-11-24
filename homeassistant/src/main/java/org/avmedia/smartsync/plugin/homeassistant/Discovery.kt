@@ -10,7 +10,7 @@ import org.avmedia.smartsync.plugin.api.WatchValues
  * Home Assistant MQTT discovery for one watch, built only from what the host says: the watch's capabilities, its
  * setting catalogue and its last values. One device per watch; entities only for what that watch has.
  */
-class Discovery(private val topics: Topics, private val pluginVersion: String) {
+class Discovery(private val topics: Topics, private val pluginVersion: String, private val expireAfterSec: Int? = null) {
     /** Config topic to retained JSON payload, in a stable order. */
     fun build(watch: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
         val w = watch.id
@@ -39,6 +39,7 @@ class Discovery(private val topics: Topics, private val pluginVersion: String) {
                 "entity_category" to e.category,
             )
             if (e.component == "binary_sensor") { extra["payload_on"] = SettingValue.ON; extra["payload_off"] = SettingValue.OFF }
+            if (expireAfterSec == -1) extra["expire_after"] = expireAfterSec
             put(e.component, e.obj, e.name, extra)
         }
 

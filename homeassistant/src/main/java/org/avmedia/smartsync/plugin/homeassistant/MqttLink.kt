@@ -7,6 +7,9 @@ data class Will(val topic: String, val payload: String, val retain: Boolean = tr
 interface MqttLink {
     val connected: Boolean
 
+    /** The broker publishes our last will when the connection drops (direct MQTT); false through Home Assistant. */
+    val hasWill: Boolean get() = true
+
     /** Connects (and reconnects by itself after a drop or a failed first attempt) until [disconnect]. */
     fun connect(config: BrokerConfig, will: Will, listener: Listener)
 
