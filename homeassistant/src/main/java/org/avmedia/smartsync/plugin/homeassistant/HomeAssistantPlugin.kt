@@ -281,7 +281,7 @@ class HomeAssistantPlugin(
         const val REPO = "https://github.com/ExcuseMi/smartsync-plugins"
 
         /** The plugin's version (homeassistant/build.gradle, tag v<version>). */
-        const val VERSION = "0.1.0"
+        const val VERSION = "0.1.1"
         const val NOT_SET_UP = "Not set up"
         const val DAY_MILLIS = 24 * 3_600_000L
 

@@ -5,7 +5,7 @@ Google Fit can show them. It only writes; it never reads Health Connect. Details
 
 ## Setup
 1. A watch with a health log (the GBX-H5600 family).
-2. In the app: Settings, Plugins, Health Connect: turn it on, then Allow on Health Connect's permission screen.
+2. In the app: Settings, Plugins, Health Connect: turn it on: Health Connect's permission screen opens at once; allow the writes.
 3. Read health data from the watch as usual.
 
 ## FAQ

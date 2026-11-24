@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+- Turning the plugin on opens Health Connect's permission screen at once: the write permissions are declared to the
+  host with the plugin's own check and request screen (before, the person had to open the plugin and press Allow).
+
 ## 0.1.0
 - Writes steps per hour, heart rate (one record per day), resting heart rate and blood oxygen of finished days, sleep
   sessions (stages only when proven) and workouts (session and energy when its unit is proven) to Health Connect.

@@ -6,7 +6,7 @@ plugins {
 }
 
 // The plugin version. Tag: healthconnect-v<version>.
-version = '0.1.0'
+version = '0.1.1'
 group = 'com.github.ExcuseMi.smartsync-plugins'
 
 android {

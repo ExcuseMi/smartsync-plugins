@@ -1,5 +1,10 @@
 package org.avmedia.smartsync.plugin.healthconnect
 
+import android.content.Context
+import android.content.Intent
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.PermissionController
+import org.avmedia.smartsync.plugin.api.AndroidPermission
 import org.avmedia.smartsync.plugin.api.Capability
 import org.avmedia.smartsync.plugin.api.DataUse
 import org.avmedia.smartsync.plugin.api.PluginAccess
@@ -63,12 +68,27 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
 
     override val ui: PluginUi by lazy { HealthConnectUi(this) }
 
+    /** Health Connect's own request screen for every write permission: the host opens it when the plugin is turned on. */
+    override fun permissionIntent(context: Context): Intent? = runCatching {
+        PermissionController.createRequestPermissionResultContract().createIntent(context, ALL_PERMISSIONS)
+    }.getOrNull()
+
+    /**
+     * The write permissions not granted. Without Health Connect (not installed, needs an update) none: the plugin's screen
+     * says what to do then, a request could not open.
+     */
+    override suspend fun missingPermissions(context: Context): Set<String>? {
+        if (HealthConnectSink(context).status() != SinkStatus.AVAILABLE) return emptySet()
+        val granted = HealthConnectClient.getOrCreate(context).permissionController.getGrantedPermissions()
+        return ALL_PERMISSIONS - granted
+    }
+
     companion object {
         const val ID = "health_connect"
         const val REPO = "https://github.com/ExcuseMi/smartsync-plugins"
 
         /** The plugin's version (healthconnect/build.gradle, tag healthconnect-v<version>). */
-        const val VERSION = "0.1.0"
+        const val VERSION = "0.1.1"
 
         val ACCESS = PluginAccess(
             reads = setOf(DataUse.STEPS, DataUse.HEART_RATE, DataUse.SLEEP, DataUse.BLOOD_OXYGEN, DataUse.WORKOUTS),
@@ -76,6 +96,12 @@ class HealthConnectPlugin internal constructor(private val sinkFor: (PluginHost)
             stores = listOf("which records it wrote, so none is written twice"),
             requires = setOf(Capability.HEALTH_LOG),
             uses = setOf(Capability.STEPS, Capability.HEART_RATE, Capability.SLEEP, Capability.BLOOD_OXYGEN, Capability.WORKOUTS),
+            androidPermissions = RecordType.entries.map { AndroidPermission(HealthConnectSink.permission(it), PERMISSION_REASON) },
         )
+
+        /** One reason for all of them: the status line reads "Needs permission: writing to Health Connect". */
+        const val PERMISSION_REASON = "writing to Health Connect"
+
+        val ALL_PERMISSIONS: Set<String> get() = HealthConnectSink.permissions(RecordType.entries.toSet())
     }
 }

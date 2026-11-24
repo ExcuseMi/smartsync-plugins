@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+- A re-paired watch (new Bluetooth address) leaves Home Assistant under its old id: the old device's topics are
+  emptied and the watch shows up under the new id.
+- A JSON notification may carry `app` and `type` in a `data` object, as the mobile app's notify action had them.
+
 ## 0.1.0
 - First version: each watch as a Home Assistant device through MQTT discovery (sensors, settings as select, switch,
   number and text, a notify entity, the button as event and device trigger, a read-now button, the last command).
