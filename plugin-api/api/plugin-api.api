@@ -1,0 +1,1025 @@
+public final class org/avmedia/smartsync/plugin/api/AndroidPermission {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/AndroidPermission;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/AndroidPermission;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/AndroidPermission;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/Capability : java/lang/Enum {
+	public static final field ALARMS Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field ALWAYS_CONNECTED Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field BATTERY Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field BLOOD_OXYGEN Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field FIRMWARE_INFO Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field HEALTH_LOG Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field HEALTH_SETTINGS Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field HEART_RATE Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field HOME_TIME Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field NOTIFICATIONS Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field SLEEP Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field STEPS Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field TEMPERATURE Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field TIMER Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field WATCH_SETTINGS Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field WORKOUTS Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static final field WORLD_CITIES Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/Capability;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/Capability;
+}
+
+public final class org/avmedia/smartsync/plugin/api/ConnectionKind : java/lang/Enum {
+	public static final field BACKGROUND_READ Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+	public static final field USER Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+	public static final field WATCH Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+}
+
+public final class org/avmedia/smartsync/plugin/api/Control : java/lang/Enum {
+	public static final field BUTTON_PRESS Lorg/avmedia/smartsync/plugin/api/Control;
+	public static final field Companion Lorg/avmedia/smartsync/plugin/api/Control$Companion;
+	public static final field NOTIFICATIONS Lorg/avmedia/smartsync/plugin/api/Control;
+	public static final field WATCH_FACE Lorg/avmedia/smartsync/plugin/api/Control;
+	public static final field WATCH_SETTINGS Lorg/avmedia/smartsync/plugin/api/Control;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/Control;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/Control;
+}
+
+public final class org/avmedia/smartsync/plugin/api/Control$Companion {
+	public final fun getALL ()Ljava/util/Set;
+}
+
+public abstract class org/avmedia/smartsync/plugin/api/DataKind {
+	public static final field $stable I
+	public static final field Companion Lorg/avmedia/smartsync/plugin/api/DataKind$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getName ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataKind$Companion {
+	public final fun getALL ()Ljava/util/List;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataKind$Days : org/avmedia/smartsync/plugin/api/DataKind {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/DataKind$Days;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataKind$HeartRate : org/avmedia/smartsync/plugin/api/DataKind {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/DataKind$HeartRate;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataKind$Hours : org/avmedia/smartsync/plugin/api/DataKind {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/DataKind$Hours;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataKind$Nights : org/avmedia/smartsync/plugin/api/DataKind {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/DataKind$Nights;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataKind$Workouts : org/avmedia/smartsync/plugin/api/DataKind {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/DataKind$Workouts;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataUse : java/lang/Enum {
+	public static final field BATTERY_AND_TEMPERATURE Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field BLOOD_OXYGEN Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field BODY_PROFILE Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field Companion Lorg/avmedia/smartsync/plugin/api/DataUse$Companion;
+	public static final field HEART_RATE Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field PHONE Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field PHONE_BATTERY Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field PHONE_LOCATION Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field SLEEP Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field STEPS Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field WATCH_INFO Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field WATCH_SETTINGS Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static final field WORKOUTS Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/DataUse;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DataUse$Companion {
+	public final fun getALL ()Ljava/util/Set;
+	public final fun getWATCH ()Ljava/util/Set;
+	public final fun of (Lorg/avmedia/smartsync/plugin/api/DataKind;)Lorg/avmedia/smartsync/plugin/api/DataUse;
+}
+
+public final class org/avmedia/smartsync/plugin/api/DayRecord : org/avmedia/smartsync/plugin/api/HistoryRecord {
+	public static final field $stable I
+	public fun <init> (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/time/LocalDate;
+	public final fun component10 ()Ljava/lang/Integer;
+	public final fun component11 ()Ljava/lang/Integer;
+	public final fun component12 ()Ljava/lang/Integer;
+	public final fun component13 ()Ljava/lang/Integer;
+	public final fun component14 ()Ljava/lang/Integer;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()Ljava/lang/Integer;
+	public final fun component7 ()Ljava/lang/Integer;
+	public final fun component8 ()Ljava/lang/Integer;
+	public final fun component9 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;)Lorg/avmedia/smartsync/plugin/api/DayRecord;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/DayRecord;Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/DayRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getActiveMin ()Ljava/lang/Integer;
+	public final fun getDate ()Ljava/time/LocalDate;
+	public final fun getDistanceM ()Ljava/lang/Integer;
+	public final fun getHrMax ()Ljava/lang/Integer;
+	public final fun getHrMin ()Ljava/lang/Integer;
+	public final fun getHrRest ()Ljava/lang/Integer;
+	public final fun getKcal ()Ljava/lang/Integer;
+	public final fun getRunSec ()Ljava/lang/Integer;
+	public final fun getSpo2 ()Ljava/lang/Integer;
+	public final fun getStairsDown ()Ljava/lang/Integer;
+	public final fun getStairsUp ()Ljava/lang/Integer;
+	public final fun getSteps ()Ljava/lang/Integer;
+	public final fun getStillSec ()Ljava/lang/Integer;
+	public final fun getWalkSec ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/Delivered : java/lang/Enum {
+	public static final field AT_NEXT_CONNECTION Lorg/avmedia/smartsync/plugin/api/Delivered;
+	public static final field NOW Lorg/avmedia/smartsync/plugin/api/Delivered;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/Delivered;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/Delivered;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/Delivery {
+}
+
+public final class org/avmedia/smartsync/plugin/api/Delivery$NextConnection : org/avmedia/smartsync/plugin/api/Delivery {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (JLjava/lang/String;)V
+	public synthetic fun <init> (JLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (JLjava/lang/String;)Lorg/avmedia/smartsync/plugin/api/Delivery$NextConnection;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/Delivery$NextConnection;JLjava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/Delivery$NextConnection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKeepMillis ()J
+	public final fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/Delivery$Now : org/avmedia/smartsync/plugin/api/Delivery {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/Delivery$Now;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/FailReason : java/lang/Enum {
+	public static final field BUSY Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field INTERNAL Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field INVALID Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field NOT_CONNECTED Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field NOT_DECLARED Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field NOT_SUPPORTED Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field STOPPED Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static final field TIMEOUT Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/FailReason;
+}
+
+public final class org/avmedia/smartsync/plugin/api/HeartRateSample : org/avmedia/smartsync/plugin/api/HistoryRecord {
+	public static final field $stable I
+	public fun <init> (Ljava/time/LocalDateTime;I)V
+	public final fun component1 ()Ljava/time/LocalDateTime;
+	public final fun component2 ()I
+	public final fun copy (Ljava/time/LocalDateTime;I)Lorg/avmedia/smartsync/plugin/api/HeartRateSample;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/HeartRateSample;Ljava/time/LocalDateTime;IILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/HeartRateSample;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBpm ()I
+	public final fun getTime ()Ljava/time/LocalDateTime;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/HistoryRange {
+	public static final field $stable I
+	public static final field Companion Lorg/avmedia/smartsync/plugin/api/HistoryRange$Companion;
+	public fun <init> (Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;)V
+	public final fun component1 ()Ljava/time/LocalDateTime;
+	public final fun component2 ()Ljava/time/LocalDateTime;
+	public final fun contains (Ljava/time/LocalDateTime;)Z
+	public final fun copy (Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;)Lorg/avmedia/smartsync/plugin/api/HistoryRange;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/HistoryRange;Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/HistoryRange;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrom ()Ljava/time/LocalDateTime;
+	public final fun getTo ()Ljava/time/LocalDateTime;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/HistoryRange$Companion {
+	public final fun days (Ljava/time/LocalDate;Ljava/time/LocalDate;)Lorg/avmedia/smartsync/plugin/api/HistoryRange;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/HistoryRecord {
+}
+
+public final class org/avmedia/smartsync/plugin/api/HourRecord : org/avmedia/smartsync/plugin/api/HistoryRecord {
+	public static final field $stable I
+	public fun <init> (Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/time/LocalDateTime;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;)Lorg/avmedia/smartsync/plugin/api/HourRecord;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/HourRecord;Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/HourRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeartRate ()Ljava/lang/Integer;
+	public final fun getStart ()Ljava/time/LocalDateTime;
+	public final fun getSteps ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/NightRecord : org/avmedia/smartsync/plugin/api/HistoryRecord {
+	public static final field $stable I
+	public fun <init> (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Ljava/util/List;Z)V
+	public synthetic fun <init> (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/time/LocalDate;
+	public final fun component10 ()Ljava/lang/Integer;
+	public final fun component11 ()Ljava/lang/Float;
+	public final fun component12 ()Ljava/util/List;
+	public final fun component13 ()Z
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/time/LocalDateTime;
+	public final fun component4 ()Ljava/time/LocalDateTime;
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun component6 ()Ljava/lang/Integer;
+	public final fun component7 ()Ljava/lang/Integer;
+	public final fun component8 ()Ljava/lang/Integer;
+	public final fun component9 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Ljava/util/List;Z)Lorg/avmedia/smartsync/plugin/api/NightRecord;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/NightRecord;Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Ljava/util/List;ZILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/NightRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAwakeMin ()Ljava/lang/Integer;
+	public final fun getBreathing ()Ljava/lang/Float;
+	public final fun getDate ()Ljava/time/LocalDate;
+	public final fun getDeepMin ()Ljava/lang/Integer;
+	public final fun getFellAsleep ()Ljava/time/LocalDateTime;
+	public final fun getHeartRate ()Ljava/lang/Integer;
+	public final fun getLightMin ()Ljava/lang/Integer;
+	public final fun getRemMin ()Ljava/lang/Integer;
+	public final fun getScore ()Ljava/lang/Integer;
+	public final fun getStages ()Ljava/util/List;
+	public final fun getStagesConfirmed ()Z
+	public final fun getTotalMin ()Ljava/lang/Integer;
+	public final fun getWokeUp ()Ljava/time/LocalDateTime;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/NotificationKind : java/lang/Enum {
+	public static final field CALENDAR Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public static final field CALL Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public static final field EMAIL Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public static final field GENERIC Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public static final field MESSAGE Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PairedWatch {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;Ljava/util/Set;Z)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/Set;
+	public final fun component4 ()Z
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;Ljava/util/Set;Z)Lorg/avmedia/smartsync/plugin/api/PairedWatch;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PairedWatch;Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;Ljava/util/Set;ZILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PairedWatch;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCapabilities ()Ljava/util/Set;
+	public final fun getConnected ()Z
+	public final fun getId ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginAccess {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Ljava/util/Set;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Ljava/util/Set;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun component2 ()Ljava/util/Set;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/Set;
+	public final fun component6 ()Ljava/util/Set;
+	public final fun component7 ()Ljava/util/List;
+	public final fun copy (Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Ljava/util/Set;Ljava/util/List;)Lorg/avmedia/smartsync/plugin/api/PluginAccess;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginAccess;Ljava/util/Set;Ljava/util/Set;Ljava/util/List;Ljava/util/List;Ljava/util/Set;Ljava/util/Set;Ljava/util/List;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginAccess;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAndroidPermissions ()Ljava/util/List;
+	public final fun getControls ()Ljava/util/Set;
+	public final fun getReads ()Ljava/util/Set;
+	public final fun getRequires ()Ljava/util/Set;
+	public final fun getSendsTo ()Ljava/util/List;
+	public final fun getStores ()Ljava/util/List;
+	public final fun getUses ()Ljava/util/Set;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginApi {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/PluginApi;
+	public static final field VERSION Ljava/lang/String;
+	public final fun atLeast (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun compatible (Ljava/lang/String;Ljava/lang/String;)Z
+	public static synthetic fun compatible$default (Lorg/avmedia/smartsync/plugin/api/PluginApi;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Z
+	public final fun parse (Ljava/lang/String;)Lkotlin/Triple;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/PluginHost {
+	public abstract fun command (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchCommand;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun command$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchCommand;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun connected ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public abstract fun current ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public abstract fun declareNeeds (Lorg/avmedia/smartsync/plugin/api/PluginNeeds;)V
+	public abstract fun getApiVersion ()Ljava/lang/String;
+	public abstract fun getAppVersion ()Ljava/lang/String;
+	public abstract fun getContext ()Landroid/content/Context;
+	public abstract fun history (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/DataKind;Lorg/avmedia/smartsync/plugin/api/HistoryRange;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun lastValues (Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/WatchValues;
+	public abstract fun missingPermissions ()Ljava/util/Set;
+	public abstract fun notify (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun notify$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun requestPermissions ()V
+	public abstract fun settingCatalog (Lorg/avmedia/smartsync/plugin/api/WatchId;)Ljava/util/List;
+	public abstract fun settings (Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/SettingsSnapshot;
+	public abstract fun status (Lorg/avmedia/smartsync/plugin/api/PluginStatus;)V
+	public abstract fun storage ()Lorg/avmedia/smartsync/plugin/api/PluginStorage;
+	public abstract fun storage (Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/PluginStorage;
+	public abstract fun valueCatalog ()Ljava/util/List;
+	public abstract fun watchName (Lorg/avmedia/smartsync/plugin/api/WatchId;)Ljava/lang/String;
+	public abstract fun watches ()Ljava/util/List;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginHost$DefaultImpls {
+	public static synthetic fun command$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchCommand;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun notify$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/PluginIcon {
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginIcon$Drawable : org/avmedia/smartsync/plugin/api/PluginIcon {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lorg/avmedia/smartsync/plugin/api/PluginIcon$Drawable;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginIcon$Drawable;IILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginIcon$Drawable;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginIcon$Vector : org/avmedia/smartsync/plugin/api/PluginIcon {
+	public static final field $stable I
+	public fun <init> (Landroidx/compose/ui/graphics/vector/ImageVector;)V
+	public final fun component1 ()Landroidx/compose/ui/graphics/vector/ImageVector;
+	public final fun copy (Landroidx/compose/ui/graphics/vector/ImageVector;)Lorg/avmedia/smartsync/plugin/api/PluginIcon$Vector;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginIcon$Vector;Landroidx/compose/ui/graphics/vector/ImageVector;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginIcon$Vector;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImage ()Landroidx/compose/ui/graphics/vector/ImageVector;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginNeeds {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Set;ZZZLjava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/util/Set;ZZZLjava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/util/Set;ZZZLjava/lang/Integer;)Lorg/avmedia/smartsync/plugin/api/PluginNeeds;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginNeeds;Ljava/util/Set;ZZZLjava/lang/Integer;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginNeeds;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getButtonPress ()Z
+	public final fun getHealthReads ()Z
+	public final fun getSettings ()Z
+	public final fun getValues ()Ljava/util/Set;
+	public final fun getWakeEveryMinutes ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/PluginResult {
+	public fun valueOrNull ()Ljava/lang/Object;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginResult$DefaultImpls {
+	public static fun valueOrNull (Lorg/avmedia/smartsync/plugin/api/PluginResult;)Ljava/lang/Object;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginResult$Failed : org/avmedia/smartsync/plugin/api/PluginResult {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/FailReason;Ljava/lang/String;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/FailReason;Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/PluginResult$Failed;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginResult$Failed;Lorg/avmedia/smartsync/plugin/api/FailReason;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginResult$Failed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getReason ()Lorg/avmedia/smartsync/plugin/api/FailReason;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public synthetic fun valueOrNull ()Ljava/lang/Object;
+	public fun valueOrNull ()Ljava/lang/Void;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginResult$Ok : org/avmedia/smartsync/plugin/api/PluginResult {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginResult$Ok;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginResult$Ok;Ljava/lang/Object;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginResult$Ok;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public fun valueOrNull ()Ljava/lang/Object;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/PluginStatus {
+	public abstract fun getText ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginStatus$Error : org/avmedia/smartsync/plugin/api/PluginStatus {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/PluginStatus$Error;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginStatus$Error;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginStatus$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginStatus$Ok : org/avmedia/smartsync/plugin/api/PluginStatus {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/PluginStatus$Ok;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/PluginStatus$Ok;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/PluginStatus$Ok;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/PluginStorage {
+	public abstract fun delete (Ljava/lang/String;)V
+	public abstract fun get (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun keys ()Ljava/util/Set;
+	public abstract fun put (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun putAll (Ljava/util/Map;)V
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/PluginUi {
+	public fun ActionsRow (Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SettingsScreen (Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public fun getHasActionsRow ()Z
+	public fun getOpensOnTurnOn ()Z
+}
+
+public final class org/avmedia/smartsync/plugin/api/PluginUi$DefaultImpls {
+	public static fun ActionsRow (Lorg/avmedia/smartsync/plugin/api/PluginUi;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static fun getHasActionsRow (Lorg/avmedia/smartsync/plugin/api/PluginUi;)Z
+	public static fun getOpensOnTurnOn (Lorg/avmedia/smartsync/plugin/api/PluginUi;)Z
+}
+
+public final class org/avmedia/smartsync/plugin/api/Redact {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/Redact;
+	public final fun secret (Ljava/lang/String;)Ljava/lang/String;
+	public final fun url (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/SettingInfo {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lkotlin/ranges/IntRange;
+	public final fun component5 ()Ljava/util/Set;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lorg/avmedia/smartsync/plugin/api/Control;
+	public final fun copy (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;)Lorg/avmedia/smartsync/plugin/api/SettingInfo;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/SettingInfo;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/SettingInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChoices ()Ljava/util/List;
+	public final fun getControl ()Lorg/avmedia/smartsync/plugin/api/Control;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun getOnly ()Ljava/util/Set;
+	public final fun getRange ()Lkotlin/ranges/IntRange;
+	public final fun getType ()Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/SettingType : java/lang/Enum {
+	public static final field BOOL Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public static final field CHOICE Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public static final field TIME Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public static final field WHOLE Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/SettingType;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/SettingType;
+}
+
+public final class org/avmedia/smartsync/plugin/api/SettingsSnapshot {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/lang/Long;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/lang/Long;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/lang/Long;)Lorg/avmedia/smartsync/plugin/api/SettingsSnapshot;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/SettingsSnapshot;Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/lang/Long;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/SettingsSnapshot;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReadAtMillis ()Ljava/lang/Long;
+	public final fun getValues ()Ljava/util/Map;
+	public final fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/SleepStage {
+	public static final field $stable I
+	public fun <init> (Ljava/time/LocalDateTime;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/time/LocalDateTime;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/time/LocalDateTime;Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/SleepStage;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/SleepStage;Ljava/time/LocalDateTime;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/SleepStage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKind ()Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+	public final fun getStage ()Ljava/lang/String;
+	public final fun getStart ()Ljava/time/LocalDateTime;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/SleepStageKind : java/lang/Enum {
+	public static final field AWAKE Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+	public static final field DEEP Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+	public static final field LIGHT Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+	public static final field REM Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/SleepStageKind;
+}
+
+public final class org/avmedia/smartsync/plugin/api/ValueCause : java/lang/Enum {
+	public static final field BUTTON Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static final field CONNECTION Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static final field HEALTH_READ Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static final field REQUEST Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static final field SNAPSHOT Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static final field WORKOUT Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/ValueCause;
+}
+
+public final class org/avmedia/smartsync/plugin/api/ValueInfo {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/DataUse;Lorg/avmedia/smartsync/plugin/api/ValueType;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/DataUse;Lorg/avmedia/smartsync/plugin/api/ValueType;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public final fun component4 ()Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/DataUse;Lorg/avmedia/smartsync/plugin/api/ValueType;Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/ValueInfo;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/ValueInfo;Ljava/lang/String;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/DataUse;Lorg/avmedia/smartsync/plugin/api/ValueType;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/ValueInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getType ()Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public final fun getUnit ()Ljava/lang/String;
+	public final fun getUse ()Lorg/avmedia/smartsync/plugin/api/DataUse;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/ValueType : java/lang/Enum {
+	public static final field BOOL Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field DATE Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field DATE_TIME Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field LIST Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field LOCAL_DATE_TIME Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field MAP Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field NUMBER Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field TEXT Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field TIME Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static final field WHOLE Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/ValueType;
+	public static fun values ()[Lorg/avmedia/smartsync/plugin/api/ValueType;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/WatchCommand {
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchCommand$ChangeSettings : org/avmedia/smartsync/plugin/api/WatchCommand {
+	public static final field $stable I
+	public fun <init> (Ljava/util/Map;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lorg/avmedia/smartsync/plugin/api/WatchCommand$ChangeSettings;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchCommand$ChangeSettings;Ljava/util/Map;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchCommand$ChangeSettings;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValues ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchCommand$RefreshValues : org/avmedia/smartsync/plugin/api/WatchCommand {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/WatchCommand$RefreshValues;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/WatchEvent {
+	public abstract fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$BackgroundStarted : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/WatchEvent$BackgroundStarted;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$BackgroundStopped : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/WatchEvent$BackgroundStopped;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$ButtonPressed : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/time/Instant;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Ljava/time/Instant;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/time/Instant;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$ButtonPressed;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$ButtonPressed;Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/time/Instant;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$ButtonPressed;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAt ()Ljava/time/Instant;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$Connected : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/ConnectionKind;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/ConnectionKind;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$Connected;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$Connected;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/ConnectionKind;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$Connected;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKind ()Lorg/avmedia/smartsync/plugin/api/ConnectionKind;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$Disconnected : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$Disconnected;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$Disconnected;Lorg/avmedia/smartsync/plugin/api/WatchId;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$Disconnected;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$EventsLost : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/WatchEvent$EventsLost;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$HealthRead : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/HistoryRange;Ljava/util/Set;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/HistoryRange;
+	public final fun component3 ()Ljava/util/Set;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/HistoryRange;Ljava/util/Set;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$HealthRead;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$HealthRead;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/HistoryRange;Ljava/util/Set;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$HealthRead;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKinds ()Ljava/util/Set;
+	public final fun getRange ()Lorg/avmedia/smartsync/plugin/api/HistoryRange;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$PermissionsChanged : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Ljava/util/Set;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$PermissionsChanged;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$PermissionsChanged;Ljava/util/Set;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$PermissionsChanged;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMissing ()Ljava/util/Set;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$SettingChanged : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Object;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;Ljava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$SettingChanged;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$SettingChanged;Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$SettingChanged;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$ValuesUpdated : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchValues;Lorg/avmedia/smartsync/plugin/api/ValueCause;Ljava/util/Set;)V
+	public synthetic fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchValues;Lorg/avmedia/smartsync/plugin/api/ValueCause;Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/WatchValues;
+	public final fun component3 ()Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public final fun component4 ()Ljava/util/Set;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchValues;Lorg/avmedia/smartsync/plugin/api/ValueCause;Ljava/util/Set;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$ValuesUpdated;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$ValuesUpdated;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchValues;Lorg/avmedia/smartsync/plugin/api/ValueCause;Ljava/util/Set;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$ValuesUpdated;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun fresh ()Ljava/util/Map;
+	public final fun getCause ()Lorg/avmedia/smartsync/plugin/api/ValueCause;
+	public final fun getReadNow ()Ljava/util/Set;
+	public final fun getValues ()Lorg/avmedia/smartsync/plugin/api/WatchValues;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$Wake : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lorg/avmedia/smartsync/plugin/api/WatchEvent$Wake;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$WatchRePaired : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchId;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$WatchRePaired;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$WatchRePaired;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchId;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$WatchRePaired;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFrom ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$WatchRemoved : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$WatchRemoved;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$WatchRemoved;Lorg/avmedia/smartsync/plugin/api/WatchId;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$WatchRemoved;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchEvent$WorkoutStored : org/avmedia/smartsync/plugin/api/WatchEvent {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$WorkoutStored;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchEvent$WorkoutStored;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchEvent$WorkoutStored;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun getWorkout ()Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchId {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchNotification {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/NotificationKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/time/LocalDateTime;)V
+	public synthetic fun <init> (Lorg/avmedia/smartsync/plugin/api/NotificationKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/time/LocalDateTime;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/time/LocalDateTime;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/NotificationKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/time/LocalDateTime;)Lorg/avmedia/smartsync/plugin/api/WatchNotification;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/NotificationKind;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/time/LocalDateTime;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchNotification;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApp ()Ljava/lang/String;
+	public final fun getKind ()Lorg/avmedia/smartsync/plugin/api/NotificationKind;
+	public final fun getText ()Ljava/lang/String;
+	public final fun getTime ()Ljava/time/LocalDateTime;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/avmedia/smartsync/plugin/api/WatchPlugin {
+	public abstract fun activate (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deactivate (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getAccess ()Lorg/avmedia/smartsync/plugin/api/PluginAccess;
+	public abstract fun getApiVersion ()Ljava/lang/String;
+	public fun getAuthor ()Ljava/lang/String;
+	public fun getDescription ()Ljava/lang/String;
+	public fun getIcon ()Lorg/avmedia/smartsync/plugin/api/PluginIcon;
+	public abstract fun getId ()Ljava/lang/String;
+	public fun getInfoUrl ()Ljava/lang/String;
+	public fun getIssuesUrl ()Ljava/lang/String;
+	public fun getLicense ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public fun getSetupNeeds ()Ljava/lang/String;
+	public fun getSourceUrl ()Ljava/lang/String;
+	public fun getSummary ()Ljava/lang/String;
+	public fun getUi ()Lorg/avmedia/smartsync/plugin/api/PluginUi;
+	public abstract fun getVersion ()Ljava/lang/String;
+	public fun missingPermissions (Landroid/content/Context;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onEvent (Lorg/avmedia/smartsync/plugin/api/WatchEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun permissionIntent (Landroid/content/Context;)Landroid/content/Intent;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchPlugin$DefaultImpls {
+	public static fun getAuthor (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getDescription (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getIcon (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Lorg/avmedia/smartsync/plugin/api/PluginIcon;
+	public static fun getInfoUrl (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getIssuesUrl (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getLicense (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getSetupNeeds (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getSourceUrl (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getSummary (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Ljava/lang/String;
+	public static fun getUi (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;)Lorg/avmedia/smartsync/plugin/api/PluginUi;
+	public static fun missingPermissions (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;Landroid/content/Context;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun permissionIntent (Lorg/avmedia/smartsync/plugin/api/WatchPlugin;Landroid/content/Context;)Landroid/content/Intent;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WatchValues {
+	public static final field $stable I
+	public fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/util/Map;)V
+	public synthetic fun <init> (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/util/Map;)Lorg/avmedia/smartsync/plugin/api/WatchValues;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WatchValues;Lorg/avmedia/smartsync/plugin/api/WatchId;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WatchValues;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (Ljava/lang/String;)Ljava/lang/Object;
+	public final fun getReadAtMillis ()Ljava/util/Map;
+	public final fun getValues ()Ljava/util/Map;
+	public final fun getWatch ()Lorg/avmedia/smartsync/plugin/api/WatchId;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WorkoutRecord : org/avmedia/smartsync/plugin/api/HistoryRecord {
+	public static final field $stable I
+	public static final field Companion Lorg/avmedia/smartsync/plugin/api/WorkoutRecord$Companion;
+	public static final field DISTANCE Ljava/lang/String;
+	public static final field KCAL Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/time/Instant;Ljava/time/Instant;ILjava/lang/String;Ljava/lang/Integer;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/Long;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/Set;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/time/Instant;Ljava/time/Instant;ILjava/lang/String;Ljava/lang/Integer;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/Long;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/Integer;
+	public final fun component11 ()Ljava/lang/Integer;
+	public final fun component12 ()Ljava/lang/Integer;
+	public final fun component13 ()Ljava/lang/Long;
+	public final fun component14 ()Ljava/lang/Long;
+	public final fun component15 ()Ljava/util/Set;
+	public final fun component2 ()Ljava/time/Instant;
+	public final fun component3 ()Ljava/time/Instant;
+	public final fun component4 ()I
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/Integer;
+	public final fun component7 ()Ljava/lang/Double;
+	public final fun component8 ()Ljava/lang/Double;
+	public final fun component9 ()Ljava/lang/Long;
+	public final fun copy (Ljava/lang/String;Ljava/time/Instant;Ljava/time/Instant;ILjava/lang/String;Ljava/lang/Integer;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/Long;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/Set;)Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;Ljava/lang/String;Ljava/time/Instant;Ljava/time/Instant;ILjava/lang/String;Ljava/lang/Integer;Ljava/lang/Double;Ljava/lang/Double;Ljava/lang/Long;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Long;Ljava/lang/Long;Ljava/util/Set;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/WorkoutRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAscent ()Ljava/lang/Long;
+	public final fun getDescent ()Ljava/lang/Long;
+	public final fun getDistance ()Ljava/lang/Double;
+	public final fun getDistanceM ()Ljava/lang/Double;
+	public final fun getEnd ()Ljava/time/Instant;
+	public final fun getHrAvg ()Ljava/lang/Integer;
+	public final fun getHrMax ()Ljava/lang/Integer;
+	public final fun getHrMin ()Ljava/lang/Integer;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getKcal ()Ljava/lang/Long;
+	public final fun getSport ()I
+	public final fun getSportName ()Ljava/lang/String;
+	public final fun getStart ()Ljava/time/Instant;
+	public final fun getTotalSec ()Ljava/lang/Integer;
+	public final fun getUnconfirmed ()Ljava/util/Set;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/avmedia/smartsync/plugin/api/WorkoutRecord$Companion {
+}
+

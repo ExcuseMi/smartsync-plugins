@@ -84,7 +84,9 @@ Settings, Devices & services, Add integration, MQTT: broker host (the machine ru
 Discovery is on by default with the prefix `homeassistant`; the plugin uses the same.
 
 ## The app side
-Settings, Plugins, Home Assistant. At the top: the Home Assistant address and the token. Then **How to connect**:
+Settings, Plugins, Home Assistant. At the top: **Share health data with Home Assistant** (on by default; off removes
+the health and workout entities and sends no health value, history or statistic), the Home Assistant address and the
+token. Then **How to connect**:
 
 | Choice | How it works | When |
 |---|---|---|
@@ -180,4 +182,4 @@ sensors and the old device tracker and notify entities have no counterpart (use 
 
 ## Building
 A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
-JitPack after a tag `homeassistant-v<version>`: `com.github.ExcuseMi.smartsync-plugins:homeassistant:homeassistant-v<version>` (no tag yet).
+JitPack after a tag `homeassistant-v<version>`: `com.github.ExcuseMi.smartsync-plugins:homeassistant:homeassistant-v<version>`.

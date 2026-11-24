@@ -56,6 +56,11 @@ data class BrokerConfig(
     val discovery: Boolean = true,
     val discoveryPrefix: String = DEFAULT_DISCOVERY_PREFIX,
     val baseTopic: String = DEFAULT_BASE_TOPIC,
+    /**
+     * "Share health data with Home Assistant" (on until switched off). Off: no health entity (their discovery configs
+     * are emptied, so Home Assistant removes them), no health state, history topic or statistic.
+     */
+    val shareHealth: Boolean = true,
 ) {
     val transport: BrokerTransport get() = BrokerTransport.of(tls, websocket)
 
@@ -123,7 +128,7 @@ data class BrokerConfig(
 
     override fun toString(): String =
         "BrokerConfig(mode=${mode.wire}, ha=${haUrl.ifEmpty { "none" }}, token=${if (haToken.isEmpty()) "none" else "***"}, ${serverUri()}, user=${username.ifEmpty { "none" }}, password=${if (password.isEmpty()) "none" else "***"}, " +
-            "clientId=$clientId, discovery=$discovery, discoveryPrefix=$discoveryPrefix, baseTopic=$baseTopic)"
+            "clientId=$clientId, discovery=$discovery, discoveryPrefix=$discoveryPrefix, baseTopic=$baseTopic, shareHealth=$shareHealth)"
 
     fun save(s: PluginStorage) {
         s.put(KEY_MODE, mode.wire)
@@ -140,6 +145,7 @@ data class BrokerConfig(
         s.put(KEY_DISCOVERY, discovery.toString())
         s.put(KEY_DISCOVERY_PREFIX, trimTopic(discoveryPrefix))
         s.put(KEY_BASE_TOPIC, trimTopic(baseTopic))
+        s.put(KEY_SHARE_HEALTH, shareHealth.toString())
     }
 
     /**
@@ -176,6 +182,7 @@ data class BrokerConfig(
         const val KEY_DISCOVERY = "discovery"
         const val KEY_DISCOVERY_PREFIX = "discovery_prefix"
         const val KEY_BASE_TOPIC = "base_topic"
+        const val KEY_SHARE_HEALTH = "share_health"
 
         fun load(s: PluginStorage): BrokerConfig {
             val tls = s.get(KEY_TLS) == "true"
@@ -195,6 +202,7 @@ data class BrokerConfig(
                 discovery = s.get(KEY_DISCOVERY) != "false",
                 discoveryPrefix = s.get(KEY_DISCOVERY_PREFIX)?.takeIf { it.isNotBlank() } ?: DEFAULT_DISCOVERY_PREFIX,
                 baseTopic = s.get(KEY_BASE_TOPIC)?.takeIf { it.isNotBlank() } ?: DEFAULT_BASE_TOPIC,
+                shareHealth = s.get(KEY_SHARE_HEALTH) != "false",
             )
         }
 

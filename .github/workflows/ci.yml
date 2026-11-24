@@ -36,6 +36,21 @@ jobs:
       - name: Unit tests (plugin-api and every plugin)
         run: ./gradlew --continue testDebugUnitTest
 
+      - name: plugin-api public interface matches its dump (binary compatibility)
+        run: ./gradlew :plugin-api:apiCheck
+
+      - name: The dump of the interface as built, for a deliberate change (commit plugin-api/api/)
+        if: failure()
+        run: ./gradlew :plugin-api:apiDump
+
+      - name: Upload the interface dump
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-api-dump
+          path: plugin-api/api/
+          if-no-files-found: ignore
+
       - name: Lint, release build and local publication of every module
         run: ./gradlew --continue lintDebug assembleRelease publishToMavenLocal
 

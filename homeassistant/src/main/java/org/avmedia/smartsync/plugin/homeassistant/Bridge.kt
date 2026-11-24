@@ -32,7 +32,7 @@ class Bridge(
     val topics = Topics(config.baseTopic, config.discoveryPrefix)
 
     /** Without a last will (through Home Assistant) the sensors expire unless [heartbeat] sends them again in time. */
-    private val discovery = Discovery(topics, pluginVersion, expireAfterSec = if (link.hasWill) null else EXPIRE_AFTER_SEC)
+    private val discovery = Discovery(topics, pluginVersion, expireAfterSec = if (link.hasWill) null else EXPIRE_AFTER_SEC, health = config.shareHealth)
     private val lock = Any()
 
     /** What this connection published per topic: the broker keeps retained messages, so equal ones are not sent again. */
@@ -225,14 +225,14 @@ class Bridge(
     /** State topic to payload for [w]: its values, then its settings. Absent values publish nothing. */
     internal fun states(w: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
         val out = LinkedHashMap<String, String>()
-        for (e in Entities.valuesFor(w.capabilities)) {
-            val v: Any? = if (e.key == "watch.connected") connectedNow[w.id] ?: w.connected else Entities.convert(e, values[e.key], zone())
+        val types = host.valueCatalog().associate { it.key to it.type }
+        for (e in Entities.valuesFor(w.capabilities, config.shareHealth)) {
+            val v: Any? = if (e.key == "watch.connected") connectedNow[w.id] ?: w.connected else Entities.convert(e, values[e.key], zone(), types[e.key])
             Values.format(v)?.let { out[topics.state(w.id, e.obj)] = it }
         }
         val settings = host.settings(w.id).values
         for (s in catalog) {
-            val v = settings[s.key] ?: values["watch.setting.${s.key}"]
-            SettingValue.format(s, v)?.let { out[topics.settingState(w.id, s.key)] = it }
+            SettingValue.format(s, settings[s.key])?.let { out[topics.settingState(w.id, s.key)] = it }
         }
         return out
     }
@@ -253,7 +253,8 @@ class Bridge(
         if (Capability.HEALTH_LOG !in watch.capabilities && Capability.WORKOUTS !in watch.capabilities) return
         val w = watch.id
         val range = HistoryRange.days(HistoryTopics.firstDay(today()), today())
-        val built = HistoryTopics.build(
+        // Health kept out of Home Assistant: nothing is built, so the topics published before are emptied below.
+        val built = if (!config.shareHealth) emptyMap() else HistoryTopics.build(
             topics, w,
             host.history(w, DataKind.Hours, range).valueOrNull().orEmpty(),
             host.history(w, DataKind.HeartRate, range).valueOrNull().orEmpty(),

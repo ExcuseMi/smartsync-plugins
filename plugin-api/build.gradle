@@ -3,11 +3,13 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id 'maven-publish'
+    // The public interface is dumped to api/plugin-api.api; apiCheck (CI) fails on any change to it that is not in the dump.
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 // The interface version: also PluginApi.VERSION (PluginApiVersionTest keeps both the same). Tag: plugin-api-v<version>.
 version = '0.1.0'
-group = 'com.github.ExcuseMi.CasioGShockSmartSync'
+group = 'com.github.ExcuseMi.smartsync-plugins'
 
 android {
     namespace = 'org.avmedia.smartsync.plugin.api'
@@ -56,7 +58,8 @@ afterEvaluate {
                 from components.release
                 groupId = project.group
                 artifactId = 'plugin-api'
-                version = project.version
+                // On JitPack the version is the tag (plugin-api-v0.1.0), the one consumers ask for.
+                version = System.getenv('JITPACK') == 'true' ? System.getenv('VERSION') : project.version
             }
         }
     }

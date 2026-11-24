@@ -3,7 +3,11 @@
 The interface between Smart Sync (the host) and its plugins (Home Assistant, Health Connect, a TRMNL webhook, ...).
 Pure Kotlin plus Android `Context` and Compose for a plugin's screens. No Casio, Home Assistant or app classes.
 
-Coordinates (JitPack): `com.github.ExcuseMi:CasioGShockSmartSync:plugin-api-v<version>` (JitPack names the one published module after the repository; a commit works too: `...:CasioGShockSmartSync:<commit>`). Changes: `CHANGELOG.md`.
+Coordinates (JitPack): `com.github.ExcuseMi.smartsync-plugins:plugin-api:plugin-api-v<version>` (a commit works too: `...:plugin-api:<commit>`). Changes: `CHANGELOG.md`.
+
+The public interface is dumped in `api/plugin-api.api` (Kotlin binary-compatibility-validator). CI runs `apiCheck`:
+any change to the interface that is not in the dump turns it red. A deliberate change updates the dump in the same
+commit (`./gradlew :plugin-api:apiDump`, or the `plugin-api-dump` artifact of the red run) and its CHANGELOG line.
 
 Plugins are compiled into the app and get the application `Context`. The access declaration is therefore a checked
 promise to the person, not a sandbox: the host checks what goes through this interface; plugins are reviewed code.
@@ -12,7 +16,7 @@ promise to the person, not a sandbox: the host checks what goes through this int
 - Implements `WatchPlugin` (public no-argument constructor) and lists it in
   `src/main/resources/META-INF/services/org.avmedia.smartsync.plugin.api.WatchPlugin`.
 - `apiVersion = PluginApi.VERSION` (compiled in). The host runs it only when `PluginApi.compatible(...)` (below).
-- Depends on the interface as `compileOnly("com.github.ExcuseMi:CasioGShockSmartSync:plugin-api-v<version>")` (the
+- Depends on the interface as `compileOnly("com.github.ExcuseMi.smartsync-plugins:plugin-api:plugin-api-v<version>")` (the
   host brings the classes; `api` or `implementation` would put a second copy in the app) and `testImplementation` of the
   same for its tests. Built with Kotlin 2.4 or newer, Java 21 bytecode.
 - Logs with Timber 5.x (the host's; `compileOnly` as well).
@@ -33,15 +37,32 @@ promise to the person, not a sandbox: the host checks what goes through this int
   `PairedWatch`, history records), new `PluginHost` calls, new `WatchPlugin` and `PluginUi` members with a default.
 - So a plugin writes `else ->` in every `when` over these. The host never sends an event type newer than the
   plugin's `apiVersion`.
+- New fields of records the host makes come last. A plugin never calls the constructor or `copy()` of these outside
+  its tests (a new field changes both); reading fields and `componentN` stay compatible.
 - Data classes a plugin constructs (`PluginNeeds`, `PluginAccess`, `AndroidPermission`, `WatchNotification`,
   `Delivery.NextConnection`, `HistoryRange`) never get a new constructor parameter in a compatible release: a new type
-  comes instead.
+  comes instead. Accepted for `PluginNeeds` too: a new need is a new type plus a host call.
+- A new `PluginHost` call breaks the source (not the binary) of a plugin's own test fake that implements
+  `PluginHost`: such a fake gets the new call when the plugin moves to the new version.
+
+## About the plugin (shown on its details page)
+| Member | Meaning |
+|---|---|
+| `name`, `version` | required |
+| `summary` | one short line, its row in the Plugins list |
+| `description` | two or three plain sentences of what it can do, first on its page |
+| `setupNeeds` | one line of what the person must have ("Needs: ...") |
+| `infoUrl` | its guide, the "Guide" link |
+| `sourceUrl`, `issuesUrl`, `author`, `license` | under "About this plugin" |
+
+Text on a plugin's own screens follows the same rule: at most one short line of explanation per item; more behind an
+(i) tap or in the guide.
 
 ## Declaration (`WatchPlugin.access`)
 | Field | Meaning | Example (Home Assistant) |
 |---|---|---|
-| `reads` | `DataUse` kinds it reads | all but the phone's location |
-| `controls` | `Control`s it may use | notifications, watch settings, watch face, button press |
+| `reads` | `DataUse` kinds it reads (`DataUse.ALL`: everything) | everything but the phone's location |
+| `controls` | `Control`s it may use (`Control.ALL`: all) | `Control.ALL` |
 | `sendsTo` | where data goes, plain words | "your Home Assistant server" |
 | `stores` | what it keeps itself | "Home Assistant address and token" |
 | `requires` | `Capability`s a watch must have | none (any watch) |
@@ -59,11 +80,18 @@ The person sees this in Settings > Plugins (and once before turning a plugin on)
 - Android permissions: the host shows them, asks for the runtime ones when the plugin is turned on (or on
   `host.requestPermissions()`; `WatchPlugin.permissionIntent` for a flow of its own, such as Health Connect's), sends
   `WatchEvent.PermissionsChanged` with the answer and shows "Needs permission: ..." while one is missing.
+  `WatchPlugin.missingPermissions` (a check of its own) is `suspend`: the host calls it off the main thread with a
+  5 s limit and keeps the answer, which counts only for the plugin's own permissions.
+- A plugin that maps everything declares `DataUse.ALL` / `Control.ALL`; the person sees one line ("everything your
+  watch provides"). The host still checks every call against the set.
 
 ## Calls and events
 - No call throws: a call that can fail returns `PluginResult` (`Ok(value)` / `Failed(reason, message)`).
 - One key per setting: `SettingInfo.key` in `ChangeSettings`, `settings()` and `SettingChanged`. `ChangeSettings` is
   all or nothing; a refusal names its key.
+- Settings: `PluginNeeds.settings = true` has the host read the catalogue settings at each connection for
+  `settings()`; without it the snapshot holds only what another plugin asked for.
+- Times: `ValueType.DATE_TIME` always has an offset, `LOCAL_DATE_TIME` never (the watch's local time).
 - Values: a whole number is a `Long`, a fraction a `Double`, fresh and after a restart. `HistoryRange` is half open
   (`to` exclusive).
 - Writes go through the host's one watch queue: one at a time, never during a health or workout transfer, round robin
@@ -78,7 +106,7 @@ The person sees this in Settings > Plugins (and once before turning a plugin on)
   again). A callback that ignores its cancellation turns the plugin off at once. `deactivate` never runs while `onEvent`
   does. After `deactivate` the host object is revoked (`Failed(STOPPED)`, empty reads; storage still works).
 - Later work: `PluginNeeds.wakeEveryMinutes` (15 at least) and `WatchEvent.Wake`, also in a process the app was
-  stopped in. A WorkManager job of the plugin's own may run where the plugin is not started.
+  stopped in. The host keeps the process and the network until `onEvent(Wake)` returns (60 s at most). A WorkManager job of the plugin's own may run where the plugin is not started.
 - Storage: keys `[A-Za-z0-9._-]`, durable on return, may block (never from the main thread), `putAll` for a batch, at
   most 2000 keys and 64 KiB a value. Not encrypted, and backed up with the app's data. The person deletes a plugin's
   data in Settings > Plugins (also of a plugin no longer in the app).
