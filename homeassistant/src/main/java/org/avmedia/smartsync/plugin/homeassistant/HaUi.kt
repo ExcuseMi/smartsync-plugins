@@ -52,6 +52,7 @@ internal class HaUi(private val plugin: HomeAssistantPlugin) : PluginUi {
         var discovery by remember { mutableStateOf(saved.discovery) }
         var prefix by remember { mutableStateOf(saved.discoveryPrefix) }
         var base by remember { mutableStateOf(saved.baseTopic) }
+        var shareHealth by remember { mutableStateOf(saved.shareHealth) }
         var message by remember { mutableStateOf("") }
         val status by plugin.status.collectAsState()
 
@@ -61,7 +62,7 @@ internal class HaUi(private val plugin: HomeAssistantPlugin) : PluginUi {
                 host = address.trim(), port = port.trim().toIntOrNull() ?: -1, tls = tls, websocket = websocket,
                 path = path.trim().ifEmpty { "/" }, username = user.trim(), password = password,
                 clientId = clientId.trim().ifEmpty { BrokerConfig.newClientId() }, discovery = discovery,
-                discoveryPrefix = prefix, baseTopic = base,
+                discoveryPrefix = prefix, baseTopic = base, shareHealth = shareHealth,
             )
             // A pasted URL (wss://broker.example/mqtt) fills transport, port and path.
             val cfg = if (mode == ConnectMode.DIRECT && address.contains("://")) typed.withAddress(address) else typed
@@ -81,30 +82,23 @@ internal class HaUi(private val plugin: HomeAssistantPlugin) : PluginUi {
         ) {
             TextButton(onClick = onBack) { Text("Back") }
             Text("Home Assistant", style = MaterialTheme.typography.headlineSmall)
-            Text(
-                "Adds each watch as a device in Home Assistant (MQTT discovery): values as sensors, settings as " +
-                    "controls, notifications to the watch, the watch button as a trigger, hourly history as statistics.",
-                style = MaterialTheme.typography.bodyMedium,
-            )
             Text(status, style = MaterialTheme.typography.bodySmall)
+            // Saved at once (and the connection made again): off removes the health entities from Home Assistant.
+            Toggle("Share health data with Home Assistant", shareHealth) { shareHealth = it; plugin.setShareHealth(it) }
             OutlinedTextField(
                 haUrl, { haUrl = it }, Modifier.fillMaxWidth(), singleLine = true, label = { Text("Home Assistant address") },
-                supportingText = { Text("The address you open Home Assistant with, for example https://home.example.org") },
+                supportingText = { Text("For example https://home.example.org") },
             )
             OutlinedTextField(
                 haToken, { haToken = it }, Modifier.fillMaxWidth(), singleLine = true, label = { Text("Long-lived access token") },
                 visualTransformation = PasswordVisualTransformation(),
-                supportingText = { Text("Profile > Security in Home Assistant, as an administrator") },
+                supportingText = { Text("An administrator's, from Profile > Security") },
             )
             Text("How to connect", style = MaterialTheme.typography.titleMedium)
             Choice("Through your Home Assistant (recommended)", mode == ConnectMode.THROUGH_HA) { mode = ConnectMode.THROUGH_HA }
             Choice("Directly to an MQTT broker", mode == ConnectMode.DIRECT) { mode = ConnectMode.DIRECT }
             Text(
-                if (mode == ConnectMode.THROUGH_HA) {
-                    "Works wherever Home Assistant is reachable. Needs the MQTT integration in Home Assistant."
-                } else {
-                    "For a broker on your network or another system. The address and token above are then only for history."
-                },
+                if (mode == ConnectMode.THROUGH_HA) "Needs the MQTT integration in Home Assistant." else "The address and token above are then for history only.",
                 style = MaterialTheme.typography.bodySmall,
             )
             if (mode == ConnectMode.DIRECT) {
@@ -151,12 +145,7 @@ internal class HaUi(private val plugin: HomeAssistantPlugin) : PluginUi {
         var yaml by remember { mutableStateOf<DashboardResult?>(null) }
         LaunchedEffect(yaml) { yaml?.takeIf { it.ok }?.let { clipboard.setText(AnnotatedString(it.yaml)) } }
         Text("Dashboards", style = MaterialTheme.typography.titleMedium)
-        Text(
-            "A dashboard per watch in Home Assistant with what that watch has, kept up to date by the plugin and removed " +
-                "when you turn it off. Needs the address and an administrator's token above; without one, copy the YAML " +
-                "into a dashboard's raw configuration editor.",
-            style = MaterialTheme.typography.bodySmall,
-        )
+        Text("Kept up to date by the plugin; without a token, copy the YAML instead.", style = MaterialTheme.typography.bodySmall)
         watches.forEach { w ->
             var on by remember(w.id) { mutableStateOf(plugin.dashboardWanted(w.id)) }
             Toggle("Create a dashboard for ${w.name}", on) { on = it; plugin.setDashboard(w.id, it) }

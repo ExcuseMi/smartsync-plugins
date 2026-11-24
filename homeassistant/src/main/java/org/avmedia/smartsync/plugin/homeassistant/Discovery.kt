@@ -10,7 +10,13 @@ import org.avmedia.smartsync.plugin.api.WatchValues
  * Home Assistant MQTT discovery for one watch, built only from what the host says: the watch's capabilities, its
  * setting catalogue and its last values. One device per watch; entities only for what that watch has.
  */
-class Discovery(private val topics: Topics, private val pluginVersion: String, private val expireAfterSec: Int? = null) {
+class Discovery(
+    private val topics: Topics,
+    private val pluginVersion: String,
+    private val expireAfterSec: Int? = null,
+    /** Health entities too ("Share health data with Home Assistant"). */
+    private val health: Boolean = true,
+) {
     /** Config topic to retained JSON payload, in a stable order. */
     fun build(watch: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
         val w = watch.id
@@ -29,7 +35,7 @@ class Discovery(private val topics: Topics, private val pluginVersion: String, p
             out[topics.config(component, w, obj)] = Json.write(m)
         }
 
-        for (e in Entities.valuesFor(watch.capabilities)) {
+        for (e in Entities.valuesFor(watch.capabilities, health)) {
             val extra = linkedMapOf<String, Any?>(
                 "state_topic" to topics.state(w, e.obj),
                 "device_class" to e.deviceClass,
@@ -52,7 +58,7 @@ class Discovery(private val topics: Topics, private val pluginVersion: String, p
                 "command_topic" to topics.settingSet(w, s.key),
                 "entity_category" to "config",
             )
-            val name = label(s.key)
+            val name = label(s.label)
             when (s.type) {
                 SettingType.CHOICE -> if (s.choices.isNotEmpty()) put("select", obj, name, base + ("options" to s.choices))
                 SettingType.BOOL -> put(
@@ -124,7 +130,7 @@ class Discovery(private val topics: Topics, private val pluginVersion: String, p
         const val NOTIFY_TEMPLATE = "{\"title\": {{ title | tojson }}, \"message\": {{ message | tojson }}}"
         private val ORIGIN = mapOf("name" to "Smart Sync Home Assistant plugin", "support_url" to "https://github.com/ExcuseMi/smartsync-plugins")
 
-        /** "watch_face" to "Watch face". */
+        /** "watch_face" to "Watch face"; the host's label ("Watch face") stays as it is. */
         fun label(key: String): String = key.replace('_', ' ').replace('.', ' ').trim().replaceFirstChar { it.uppercase() }
     }
 }
