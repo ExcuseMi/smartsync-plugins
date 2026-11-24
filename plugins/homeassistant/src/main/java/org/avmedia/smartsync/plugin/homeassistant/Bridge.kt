@@ -27,6 +27,7 @@ class Bridge(
     pluginVersion: String,
     private val zone: () -> ZoneId = ZoneId::systemDefault,
     private val today: () -> LocalDate = LocalDate::now,
+    private val later: (Long, () -> Unit) -> Unit = { _, _ -> },
     private val log: (String) -> Unit,
 ) {
     val topics = Topics(config.baseTopic, config.discoveryPrefix)
@@ -322,6 +323,7 @@ class Bridge(
         /** Sensors expire after this without a message (through Home Assistant); [HEARTBEAT_MIN] keeps them fresh. */
         const val HEARTBEAT_MIN = 30L
         const val EXPIRE_AFTER_SEC = (HEARTBEAT_MIN * 2 * 60 + 300).toInt()
+        const val ANNOUNCE_DELAY_MS = 5_000L
         const val MAX_ECHO = 60
         const val NOTIFY_KEEP_MILLIS = 3_600_000L
         const val MAX_QUEUED = 50

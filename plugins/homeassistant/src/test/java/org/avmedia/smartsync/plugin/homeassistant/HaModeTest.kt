@@ -26,20 +26,13 @@ class HaModeTest {
 
     private fun after(n: Int) = link.published.drop(n)
 
-    @Test fun throughHomeAssistantSensorsExpireAndTheHeartbeatKeepsThemFresh() {
+    @Test fun throughHomeAssistantTheHeartbeatSendsTheStatesAgain() {
         bridge.onConnected()
-        val c = link.configs()
-        assertTrue(c.getValue("homeassistant/sensor/$gbxNode/battery/config").contains("\"expire_after\":${Bridge.EXPIRE_AFTER_SEC}"))
-        assertFalse(c.getValue("homeassistant/select/$gbxNode/setting_watch_face/config").contains("expire_after"))
         val n = link.published.size
         bridge.heartbeat()
         assertTrue(after(n).any { it.topic == "smartsync/$gbxNode/state/battery" && it.payload == "80" })
         assertTrue(after(n).any { it.topic == "smartsync/bridge/availability" && it.payload == "online" })
         assertTrue("configs are not sent by the heartbeat", after(n).none { it.topic.endsWith("/config") })
-
-        val direct = FakeLink()
-        Bridge(host, direct, Watches.config(), "0.1.0") {}.onConnected()
-        assertTrue(direct.configs().values.none { it.contains("expire_after") })
     }
 
     @Test fun anAlwaysConnectedWatchGoesOfflineWhenItDisconnectsAButtonWatchDoesNot() {

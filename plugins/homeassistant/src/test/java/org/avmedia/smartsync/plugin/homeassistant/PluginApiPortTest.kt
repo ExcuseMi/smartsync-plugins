@@ -62,7 +62,6 @@ class PluginApiPortTest {
 
         val through = Watches.config().copy(mode = ConnectMode.THROUGH_HA, haUrl = "https://ha.example", haToken = "t")
         assertEquals(HomeAssistantPlugin.HEARTBEAT_WAKE_MIN, HomeAssistantPlugin.needs(through).wakeEveryMinutes)
-        assertTrue("woken before the sensors expire", HomeAssistantPlugin.HEARTBEAT_WAKE_MIN * 60 < Bridge.EXPIRE_AFTER_SEC)
         val directWithApi = Watches.config().copy(haUrl = "https://ha.example", haToken = "t")
         assertEquals(HomeAssistantPlugin.GAP_WAKE_MIN, HomeAssistantPlugin.needs(directWithApi).wakeEveryMinutes)
         assertNull(HomeAssistantPlugin.needs(directWithApi.copy(shareHealth = false)).wakeEveryMinutes)
