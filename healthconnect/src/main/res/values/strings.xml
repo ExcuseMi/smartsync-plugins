@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hc_rationale_title">Health Connect and your watch</string>
+    <string name="hc_rationale_text">G-Shock Smart Sync copies the health data your watch records to Health Connect, so other apps (for example Google Fit) can show it: steps per hour, heart rate, resting heart rate, blood oxygen, sleep and workouts.\n\nIt only writes. It never reads your Health Connect data, and nothing is sent anywhere else. Each record is written once and updated when the watch reports a changed value.\n\nYou can turn this off in the app (Settings, Health Connect) and remove the permissions in Health Connect at any time. Data already written stays in Health Connect until you delete it there.</string>
+</resources>
