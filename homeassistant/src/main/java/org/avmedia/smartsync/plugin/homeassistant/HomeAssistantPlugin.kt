@@ -2,7 +2,6 @@ package org.avmedia.smartsync.plugin.homeassistant
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.cancel
@@ -36,10 +35,18 @@ class HomeAssistantPlugin(
     private val linkFactory: () -> MqttLink = { PahoLink() },
     private val logger: (String) -> Unit = { Timber.tag("home_assistant_mqtt").i(it) },
     private val channelFactory: (BrokerConfig, HaChannel.Listener) -> HaChannel = { c, l -> HaSocket(c, l) },
+    private val clock: () -> Long = System::currentTimeMillis,
 ) : WatchPlugin {
     override val id = ID
     override val name = NAME
     override val summary = SUMMARY
+    override val description = DESCRIPTION
+    override val setupNeeds = "Home Assistant with MQTT, its address and an administrator's token"
+    override val infoUrl = "$REPO/blob/main/docs/homeassistant.md"
+    override val sourceUrl = "$REPO/tree/main/homeassistant"
+    override val issuesUrl = "$REPO/issues"
+    override val author = "ExcuseMi"
+    override val license = "Apache-2.0"
     override val apiVersion = PluginApi.VERSION
     override val version = VERSION
     override val access = ACCESS
@@ -51,8 +58,10 @@ class HomeAssistantPlugin(
     @Volatile private var channel: HaChannel? = null
     @Volatile private var stats: StatsSync? = null
     @Volatile private var scope: CoroutineScope? = null
-    private var jobs: List<Job> = emptyList()
     private val runLock = Mutex()
+
+    /** When the gap check of the statistics last ran (each connection, and at a [WatchEvent.Wake] a day later). */
+    @Volatile private var historyAt = 0L
 
     private val _status = MutableStateFlow(NOT_SET_UP)
     private val dashboards = DashboardSync { channel }
@@ -66,8 +75,6 @@ class HomeAssistantPlugin(
 
     override suspend fun activate(host: PluginHost) {
         this.host = host
-        val settingKeys = host.valueCatalog().map { it.key }.filter { it.startsWith("watch.setting.") }
-        host.declareNeeds(PluginNeeds(values = Entities.VALUE_KEYS + settingKeys, buttonPress = true, healthReads = true))
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         runLock.withLock { start() }
     }
@@ -90,7 +97,36 @@ class HomeAssistantPlugin(
             is WatchEvent.WorkoutStored -> { b.sync(event.watch); history(event.watch, null) }
             is WatchEvent.ButtonPressed -> b.buttonPressed(event.watch)
             is WatchEvent.WatchRemoved -> { b.removeWatch(event.watch); scope?.launch { dashboards.remove(event.watch) } }
+            is WatchEvent.Wake -> wake(b)
             else -> Unit
+        }
+    }
+
+    /**
+     * The host's periodic wake-up ([PluginNeeds.wakeEveryMinutes]), also in a process the app was stopped in: through
+     * Home Assistant the states again before the sensors expire, and the daily gap check of the statistics. Runs to the
+     * end here: the host keeps the process until this returns.
+     */
+    private suspend fun wake(b: Bridge) {
+        if (link?.hasWill == false) b.heartbeat()
+        val st = stats ?: return
+        if (clock() - historyAt < DAY_MILLIS) return
+        historyAt = clock()
+        host?.watches()?.forEach { pw ->
+            b.syncHistory(pw)
+            st.sync(pw, StatsSync.GAP_DAYS)
+        }
+    }
+
+    /** "Share health data with Home Assistant" as saved; on until switched off. */
+    fun shareHealth(): Boolean = host?.storage()?.get(BrokerConfig.KEY_SHARE_HEALTH) != "false"
+
+    /** Turns health data in Home Assistant on or off: saved, then a new connection without (or with) the health entities. */
+    fun setShareHealth(on: Boolean) {
+        val h = host ?: return
+        scope?.launch {
+            h.storage().put(BrokerConfig.KEY_SHARE_HEALTH, on.toString())
+            runLock.withLock { stop(); start() }
         }
     }
 
@@ -151,6 +187,7 @@ class HomeAssistantPlugin(
     }
 
     private fun historyAll() {
+        historyAt = clock()
         host?.watches()?.forEach { history(it.id, StatsSync.GAP_DAYS) }
     }
 
@@ -159,6 +196,7 @@ class HomeAssistantPlugin(
         val sc = scope ?: return
         val cfg = BrokerConfig.load(h.storage())
         val problem = cfg.problem()
+        h.declareNeeds(if (problem != null) PluginNeeds() else needs(cfg))
         if (problem != null) {
             _status.value = if (cfg.haUrl.isBlank() && cfg.host.isBlank()) NOT_SET_UP else "Not set up: $problem"
             h.status(PluginStatus.Ok(NOT_SET_UP))
@@ -185,7 +223,7 @@ class HomeAssistantPlugin(
         channel = ch
         link = l
         bridge = b
-        stats = if (ch != null) StatsSync(h, { channel }, logger) else null
+        stats = if (ch != null && cfg.shareHealth) StatsSync(h, { channel }, logger) else null
         val where = if (through) Redact.url(cfg.haUrl) else Redact.url(cfg.serverUri())
         logger("MQTT: connecting to $where")
         _status.value = "Connecting to " + if (through) "Home Assistant" else cfg.host
@@ -215,17 +253,9 @@ class HomeAssistantPlugin(
             }
         })
         ch?.start()
-        jobs = listOfNotNull(
-            // Through Home Assistant the sensors expire without a message: send them again in time.
-            if (!l.hasWill) sc.launch { while (true) { delay(Bridge.HEARTBEAT_MIN * 60_000); b.heartbeat() } } else null,
-            // The gap check once a day (also at each connection, above).
-            if (ch != null) sc.launch { while (true) { delay(DAY_MILLIS); historyAll() } } else null,
-        )
     }
 
     private fun stop() {
-        jobs.forEach { it.cancel() }
-        jobs = emptyList()
         val l = link
         val b = bridge
         val ch = channel
@@ -244,6 +274,10 @@ class HomeAssistantPlugin(
         const val ID = "home_assistant_mqtt"
         const val NAME = "Home Assistant"
         const val SUMMARY = "Your watch in Home Assistant, with live values, real controls and history."
+        const val DESCRIPTION = "Adds each watch as a device in Home Assistant: battery, steps, heart rate, sleep and " +
+            "workouts as sensors, the watch's settings as controls. Send notifications to the watch and use its button " +
+            "in automations. Hourly history goes into Home Assistant's long-term statistics."
+        const val REPO = "https://github.com/ExcuseMi/smartsync-plugins"
 
         /** The plugin's version (homeassistant/build.gradle, tag v<version>). */
         const val VERSION = "0.1.0"
@@ -255,12 +289,29 @@ class HomeAssistantPlugin(
         const val ON = "on"
         const val DASHBOARD_DELAY_MS = 15_000L
 
+        /** Through Home Assistant the sensors expire without a message: woken in time to send them again. */
+        const val HEARTBEAT_WAKE_MIN = Bridge.HEARTBEAT_MIN.toInt()
+
+        /** Direct to a broker with the Home Assistant API: woken a few times a day for the daily gap check. */
+        const val GAP_WAKE_MIN = 360
+
+        /** What the host reads and sends for [cfg]: settings always, health only while it is shared. */
+        fun needs(cfg: BrokerConfig) = PluginNeeds(
+            values = if (cfg.shareHealth) Entities.VALUE_KEYS else Entities.VALUE_KEYS_WITHOUT_HEALTH,
+            settings = true,
+            buttonPress = true,
+            healthReads = cfg.shareHealth,
+            wakeEveryMinutes = when {
+                cfg.mode == ConnectMode.THROUGH_HA -> HEARTBEAT_WAKE_MIN
+                cfg.hasHaApi && cfg.shareHealth -> GAP_WAKE_MIN
+                else -> null
+            },
+        )
+
+        /** Everything the watch and phone give but the phone's location, which no entity uses; every control. */
         val ACCESS = PluginAccess(
-            reads = setOf(
-                DataUse.STEPS, DataUse.HEART_RATE, DataUse.SLEEP, DataUse.BLOOD_OXYGEN, DataUse.WORKOUTS,
-                DataUse.BATTERY_AND_TEMPERATURE, DataUse.WATCH_SETTINGS, DataUse.WATCH_INFO, DataUse.PHONE, DataUse.PHONE_BATTERY,
-            ),
-            controls = setOf(Control.NOTIFICATIONS, Control.WATCH_SETTINGS, Control.WATCH_FACE, Control.BUTTON_PRESS),
+            reads = DataUse.ALL - DataUse.PHONE_LOCATION,
+            controls = Control.ALL,
             sendsTo = listOf("your MQTT broker", "your Home Assistant (statistics, and a dashboard when you ask for one)"),
             stores = listOf("MQTT broker address, user name and password", "Home Assistant address and token"),
             uses = setOf(

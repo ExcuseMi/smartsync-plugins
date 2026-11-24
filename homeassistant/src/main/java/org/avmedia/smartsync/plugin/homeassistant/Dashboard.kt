@@ -77,7 +77,7 @@ object Dashboard {
                 SettingType.WHOLE -> if (s.only != null) "select" else "number"
                 SettingType.TIME -> "text"
             }
-            out["setting_" + s.key] = "$component.${Entities.slug(watch.name + " " + Discovery.label(s.key))}"
+            out["setting_" + s.key] = "$component.${Entities.slug(watch.name + " " + Discovery.label(s.label))}"
         }
         return out
     }

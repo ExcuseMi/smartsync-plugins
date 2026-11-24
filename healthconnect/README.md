@@ -34,7 +34,7 @@ same data writes nothing; a changed value is written with the next `clientRecord
 ## Build
 
 A module of [smartsync-plugins](../README.md), built against its `plugin-api` module; CI builds and tests every push.
-JitPack after a tag `healthconnect-v<version>`: `com.github.ExcuseMi.smartsync-plugins:healthconnect:healthconnect-v<version>` (no tag yet).
+JitPack after a tag `healthconnect-v<version>`: `com.github.ExcuseMi.smartsync-plugins:healthconnect:healthconnect-v<version>`.
 
 ## License
 

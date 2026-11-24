@@ -58,7 +58,8 @@ afterEvaluate {
                 from components.release
                 groupId = project.group
                 artifactId = 'plugin-api'
-                version = project.version
+                // On JitPack the version is the tag (plugin-api-v0.1.0), the one consumers ask for.
+                version = System.getenv('JITPACK') == 'true' ? System.getenv('VERSION') : project.version
             }
         }
     }

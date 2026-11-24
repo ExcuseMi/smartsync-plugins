@@ -54,4 +54,13 @@ class PluginBoundaryTest {
             "com.google.android.apps.healthdata",
         ).forEach { assertTrue("manifest lacks $it", manifest.contains(it)) }
     }
+
+    @Test fun theDetailsPageHasItsMetadataAndAGuide() {
+        val p = HealthConnectPlugin()
+        listOf(p.summary, p.description, p.setupNeeds, p.author, p.license).forEach { assertTrue(it.isNotBlank()) }
+        assertTrue("2 to 3 sentences: ${p.description}", p.description.split(". ").size in 2..3)
+        listOf(p.infoUrl, p.sourceUrl, p.issuesUrl).forEach { assertTrue(it!!.startsWith("https://github.com/ExcuseMi/smartsync-plugins/")) }
+        assertTrue(p.infoUrl!!.endsWith("/docs/healthconnect.md"))
+        assertTrue(File(module.parentFile, "docs/healthconnect.md").isFile)
+    }
 }
