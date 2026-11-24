@@ -157,6 +157,15 @@ History topics keep the last 7 days; a day is published again only when it chang
   its button keeps its last values.
 - Home Assistant restarted: it says so on `homeassistant/status` and the plugin publishes discovery and states again.
 
+## Dashboard (optional)
+"Create a dashboard for <watch>" in the plugin settings makes a dashboard at `/smartsync-<watch id>` with what that
+watch has: steps against the goal, heart rate now and today, last night, the controls (face, slot, light, heart rate
+mode, smart alarm, bedtime), battery and connection, the last workout. The plugin updates it when the watch's entities
+change and removes it when the option is turned off or the watch is forgotten. It only touches a dashboard it made
+(a marker in the dashboard's config); one made by you at that address is left alone. Needs the Home Assistant
+address and an administrator's token; without one, "Copy the YAML" gives the same dashboard for the raw
+configuration editor.
+
 ## Moving from the mobile app integration
 The sensors ask for the entity ids the app's mobile app integration used (`default_entity_id`, for example
 `sensor.casio_gbx_h5600_steps_today`, `binary_sensor.casio_gbx_h5600_watch_connected`), with the same unit and state

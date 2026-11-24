@@ -55,6 +55,11 @@ class HomeAssistantPlugin(
     private val runLock = Mutex()
 
     private val _status = MutableStateFlow(NOT_SET_UP)
+    private val dashboards = DashboardSync { channel }
+    private val _dashboardStatus = MutableStateFlow<Map<WatchId, String>>(emptyMap())
+
+    /** The last dashboard result per watch, for the settings screen. */
+    val dashboardStatus: StateFlow<Map<WatchId, String>> get() = _dashboardStatus
 
     /** One line for the settings card. */
     val status: StateFlow<String> get() = _status
@@ -77,14 +82,14 @@ class HomeAssistantPlugin(
     override suspend fun onEvent(event: WatchEvent) {
         val b = bridge ?: return
         when (event) {
-            is WatchEvent.Connected -> b.connectionChanged(event.watch, true)
+            is WatchEvent.Connected -> { b.connectionChanged(event.watch, true); dashboardSoon(event.watch) }
             is WatchEvent.Disconnected -> b.connectionChanged(event.watch, false)
             is WatchEvent.ValuesUpdated -> b.sync(event.watch)
             is WatchEvent.SettingChanged -> b.sync(event.watch)
             is WatchEvent.HealthRead -> { b.sync(event.watch); history(event.watch, StatsSync.GAP_DAYS) }
             is WatchEvent.WorkoutStored -> { b.sync(event.watch); history(event.watch, null) }
             is WatchEvent.ButtonPressed -> b.buttonPressed(event.watch)
-            is WatchEvent.WatchRemoved -> b.removeWatch(event.watch)
+            is WatchEvent.WatchRemoved -> { b.removeWatch(event.watch); scope?.launch { dashboards.remove(event.watch) } }
             else -> Unit
         }
     }
@@ -95,6 +100,43 @@ class HomeAssistantPlugin(
     }
 
     internal fun host(): PluginHost? = host
+
+    /** Whether the plugin keeps a dashboard for [watch] ("Create a dashboard for this watch"). */
+    fun dashboardWanted(watch: WatchId): Boolean = host?.storage(watch)?.get(DASHBOARD_KEY) == ON
+
+    /** Turns the dashboard of [watch] on (made now, kept up to date) or off (its own dashboard removed). */
+    fun setDashboard(watch: WatchId, on: Boolean) {
+        val h = host ?: return
+        scope?.launch {
+            if (on) h.storage(watch).put(DASHBOARD_KEY, ON) else h.storage(watch).delete(DASHBOARD_KEY)
+            val r = if (on) h.watches().firstOrNull { it.id == watch }?.let { dashboards.sync(it, stepGoal(watch)) } else dashboards.remove(watch)
+            r?.let { dashboardDone(watch, it) }
+        }
+    }
+
+    /** The dashboard of [watch] as YAML for the raw configuration editor, to [onDone] on the main thread's next frame. */
+    fun dashboardYaml(watch: WatchId, onDone: (DashboardResult) -> Unit) {
+        val h = host ?: return
+        val pw = h.watches().firstOrNull { it.id == watch } ?: return
+        scope?.launch { onDone(dashboards.yaml(pw, h.settingCatalog(watch), stepGoal(watch))) }
+    }
+
+    /** After discovery had time to reach Home Assistant: the dashboard of [watch] (when wanted) follows its entities. */
+    private fun dashboardSoon(watch: WatchId? = null) {
+        val h = host ?: return
+        scope?.launch {
+            delay(DASHBOARD_DELAY_MS)
+            h.watches().filter { (watch == null || it.id == watch) && dashboardWanted(it.id) }
+                .forEach { dashboardDone(it.id, dashboards.sync(it, stepGoal(it.id))) }
+        }
+    }
+
+    private fun dashboardDone(watch: WatchId, r: DashboardResult) {
+        logger("Home Assistant dashboard: ${r.message}")
+        _dashboardStatus.value = _dashboardStatus.value + (watch to r.message)
+    }
+
+    private fun stepGoal(watch: WatchId): Int? = (host?.lastValues(watch)?.get("health.step_goal") as? Number)?.toInt()
 
     /** History topics and, with the Home Assistant API, statistics for [watch]; [statDays] null: topics only. */
     private fun history(watch: WatchId, statDays: Long?) {
@@ -128,6 +170,7 @@ class HomeAssistantPlugin(
             override fun onReady() {
                 logger("Home Assistant: connected")
                 if (through) haLink?.ready() else historyAll()
+                dashboardSoon()
             }
 
             override fun onLost(reason: String, authRefused: Boolean) {
@@ -207,14 +250,19 @@ class HomeAssistantPlugin(
         const val NOT_SET_UP = "Not set up"
         const val DAY_MILLIS = 24 * 3_600_000L
 
+        /** Per-watch storage key: "on" while the plugin keeps a dashboard for the watch. */
+        const val DASHBOARD_KEY = "dashboard"
+        const val ON = "on"
+        const val DASHBOARD_DELAY_MS = 15_000L
+
         val ACCESS = PluginAccess(
             reads = setOf(
                 DataUse.STEPS, DataUse.HEART_RATE, DataUse.SLEEP, DataUse.BLOOD_OXYGEN, DataUse.WORKOUTS,
                 DataUse.BATTERY_AND_TEMPERATURE, DataUse.WATCH_SETTINGS, DataUse.WATCH_INFO, DataUse.PHONE, DataUse.PHONE_BATTERY,
             ),
             controls = setOf(Control.NOTIFICATIONS, Control.WATCH_SETTINGS, Control.WATCH_FACE, Control.BUTTON_PRESS),
-            sendsTo = listOf("your MQTT broker"),
-            stores = listOf("MQTT broker address, user name and password"),
+            sendsTo = listOf("your MQTT broker", "your Home Assistant (statistics, and a dashboard when you ask for one)"),
+            stores = listOf("MQTT broker address, user name and password", "Home Assistant address and token"),
             uses = setOf(
                 Capability.BATTERY, Capability.TEMPERATURE, Capability.STEPS, Capability.HEALTH_LOG, Capability.HEART_RATE,
                 Capability.SLEEP, Capability.BLOOD_OXYGEN, Capability.WORKOUTS, Capability.NOTIFICATIONS,

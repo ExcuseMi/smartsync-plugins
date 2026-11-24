@@ -190,10 +190,42 @@ class FakeChannel(var isReady: Boolean = true) : HaChannel {
 
     fun imports() = calls.filter { it["type"] == "recorder/import_statistics" }
 
+    /** Lovelace dashboards: url path to its id and config (null: never saved). */
+    val dashboards = LinkedHashMap<String, Pair<String, Any?>>()
+
+    /** Entity ids get_states answers. */
+    val states = mutableListOf<String>()
+
+    /** A Home Assistant error code every lovelace and registry call answers (an unauthorized token); null: none. */
+    var refuse: String? = null
+
+    fun calls(type: String) = calls.filter { it["type"] == type }
+
     @Suppress("UNCHECKED_CAST")
     override suspend fun call(message: Map<String, Any?>): HaReply {
         calls += message
-        return when (message["type"]) {
+        val type = message["type"] as String
+        refuse?.let { if (type.startsWith("lovelace/") || type.startsWith("config/")) return HaReply.failed(it, "refused") }
+        return when (type) {
+            "get_states" -> HaReply(true, states.map { mapOf("entity_id" to it, "state" to "1") })
+            "lovelace/dashboards/list" -> HaReply(true, dashboards.map { (path, d) -> mapOf("id" to d.first, "url_path" to path, "mode" to "storage") })
+            "lovelace/dashboards/create" -> {
+                val path = message["url_path"] as String
+                dashboards[path] = "id_$path" to null
+                HaReply(true, mapOf("id" to "id_$path", "url_path" to path))
+            }
+            "lovelace/dashboards/delete" -> {
+                val path = dashboards.entries.firstOrNull { it.value.first == message["dashboard_id"] }?.key
+                if (path == null) HaReply.failed("not_found", "test") else { dashboards.remove(path); HaReply(true) }
+            }
+            "lovelace/config" -> dashboards[message["url_path"]]?.second?.let { HaReply(true, it) } ?: HaReply.failed("config_not_found", "test")
+            "lovelace/config/save" -> {
+                val path = message["url_path"] as String
+                val d = dashboards[path] ?: return HaReply.failed("not_found", "test")
+                // As Home Assistant answers it later: through JSON.
+                dashboards[path] = d.first to JsonReader.read(Json.write(message["config"]))
+                HaReply(true)
+            }
             "config/entity_registry/list" ->
                 HaReply(true, entities.map { (u, e) -> mapOf("entity_id" to e, "unique_id" to u, "platform" to "mqtt") } + mapOf("entity_id" to "light.x", "unique_id" to "x", "platform" to "hue"))
             "recorder/statistics_during_period" -> {

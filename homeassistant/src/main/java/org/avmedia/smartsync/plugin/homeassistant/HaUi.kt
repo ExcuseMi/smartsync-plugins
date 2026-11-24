@@ -17,6 +17,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -133,7 +136,34 @@ internal class HaUi(private val plugin: HomeAssistantPlugin) : PluginUi {
             OutlinedTextField(base, { base = it }, Modifier.fillMaxWidth(), singleLine = true, label = { Text("Base topic") })
             Button(onClick = { save() }) { Text("Save and connect") }
             if (message.isNotEmpty()) Text(message, style = MaterialTheme.typography.bodySmall)
+            Dashboards()
         }
+    }
+
+    /** Per watch: the dashboard the plugin keeps in Home Assistant (opt-in), and its YAML to copy. */
+    @Composable
+    private fun Dashboards() {
+        val host = plugin.host() ?: return
+        val watches = remember { host.watches() }
+        if (watches.isEmpty()) return
+        val results by plugin.dashboardStatus.collectAsState()
+        val clipboard = LocalClipboardManager.current
+        var yaml by remember { mutableStateOf<DashboardResult?>(null) }
+        LaunchedEffect(yaml) { yaml?.takeIf { it.ok }?.let { clipboard.setText(AnnotatedString(it.yaml)) } }
+        Text("Dashboards", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "A dashboard per watch in Home Assistant with what that watch has, kept up to date by the plugin and removed " +
+                "when you turn it off. Needs the address and an administrator's token above; without one, copy the YAML " +
+                "into a dashboard's raw configuration editor.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+        watches.forEach { w ->
+            var on by remember(w.id) { mutableStateOf(plugin.dashboardWanted(w.id)) }
+            Toggle("Create a dashboard for ${w.name}", on) { on = it; plugin.setDashboard(w.id, it) }
+            TextButton(onClick = { plugin.dashboardYaml(w.id) { yaml = it } }) { Text("Copy the YAML of this dashboard") }
+            results[w.id]?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+        }
+        yaml?.let { Text(it.message, style = MaterialTheme.typography.bodySmall) }
     }
 
     @Composable
