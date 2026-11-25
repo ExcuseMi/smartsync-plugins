@@ -10,6 +10,7 @@ import org.avmedia.smartsync.plugin.api.HeartRateSample
 import org.avmedia.smartsync.plugin.api.HistoryRange
 import org.avmedia.smartsync.plugin.api.HistoryRecord
 import org.avmedia.smartsync.plugin.api.HourRecord
+import org.avmedia.smartsync.plugin.api.MeasurementInfo
 import org.avmedia.smartsync.plugin.api.PairedWatch
 import org.avmedia.smartsync.plugin.api.PluginHost
 import org.avmedia.smartsync.plugin.api.PluginNeeds
@@ -89,6 +90,8 @@ class FakeHost : PluginHost {
     override fun lastValues(watch: WatchId) = WatchValues(watch, values[watch].orEmpty().toMap())
     override fun settings(watch: WatchId) = SettingsSnapshot(watch, settingValues[watch].orEmpty().toMap(), 1L)
     override fun settingCatalog(watch: WatchId): List<SettingInfo> = catalogs[watch].orEmpty()
+    val measurements = HashMap<WatchId, List<MeasurementInfo>>()
+    override fun measurementCatalog(watch: WatchId): List<MeasurementInfo> = measurements[watch].orEmpty()
 
     val hours = HashMap<WatchId, List<HourRecord>>()
     val heartRate = HashMap<WatchId, List<HeartRateSample>>()

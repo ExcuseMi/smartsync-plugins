@@ -1,6 +1,7 @@
 package org.avmedia.smartsync.plugin.homeassistant
 
 import org.avmedia.smartsync.plugin.api.Capability
+import org.avmedia.smartsync.plugin.api.MeasurementInfo
 import org.avmedia.smartsync.plugin.api.ValueType
 
 /**
@@ -112,10 +113,15 @@ object Entities {
 
     /**
      * The values a watch with [caps] has; without [health] the health values are left out. A watch never connected
-     * (no caps yet) gets only those every watch has.
+     * (no caps yet) gets only those every watch has. [unsupported]: value keys of measurements its family does not
+     * have ([unsupportedKeys]); those get no entity.
      */
-    fun valuesFor(caps: Set<Capability>, health: Boolean = true): List<ValueEntity> =
-        VALUES.filter { (it.needs == null || it.needs in caps) && (health || !isHealth(it)) }
+    fun valuesFor(caps: Set<Capability>, health: Boolean = true, unsupported: Set<String> = emptySet()): List<ValueEntity> =
+        VALUES.filter { (it.needs == null || it.needs in caps) && (health || !isHealth(it)) && it.key !in unsupported }
+
+    /** The value keys of the measurements the host says the watch's family does not have; unknown ones stay. */
+    fun unsupportedKeys(measurements: List<MeasurementInfo>): Set<String> =
+        measurements.filter { it.supported == false }.flatMap { it.valueKeys }.toSet()
 
     /** "CASIO GBX-H5600" to "casio_gbx_h5600", as Home Assistant makes an entity id from a name. */
     fun slug(text: String): String =

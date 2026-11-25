@@ -17,7 +17,7 @@ class Discovery(
     private val health: Boolean = true,
 ) {
     /** Config topic to retained JSON payload, in a stable order. */
-    fun build(watch: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
+    fun build(watch: PairedWatch, values: WatchValues, catalog: List<SettingInfo>, unsupported: Set<String> = emptySet()): Map<String, String> {
         val w = watch.id
         val node = Topics.node(w)
         val out = LinkedHashMap<String, String>()
@@ -34,7 +34,7 @@ class Discovery(
             out[topics.config(component, w, obj)] = Json.write(m)
         }
 
-        for (e in Entities.valuesFor(watch.capabilities, health)) {
+        for (e in Entities.valuesFor(watch.capabilities, health, unsupported)) {
             val extra = linkedMapOf<String, Any?>(
                 "state_topic" to topics.state(w, e.obj),
                 "device_class" to e.deviceClass,

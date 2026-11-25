@@ -228,7 +228,7 @@ class Bridge(
         val values = host.lastValues(w.id)
         val catalog = host.settingCatalog(w.id)
         val desired = LinkedHashMap<String, String>()
-        if (config.discovery) desired.putAll(discovery.build(w, values, catalog))
+        if (config.discovery) desired.putAll(discovery.build(w, values, catalog, unsupported(w)))
         desired[topics.availability(w.id)] = if (online(w)) ONLINE else OFFLINE
         desired.putAll(states(w, values, catalog))
         val node = Topics.node(w.id)
@@ -249,9 +249,12 @@ class Bridge(
         if (configChanged) later(ANNOUNCE_DELAY_MS) { announce(w.id) }
     }
 
+    /** Value keys of measurements [w]'s family does not have: no entity for them (a lower one emptied). */
+    private fun unsupported(w: PairedWatch): Set<String> = Entities.unsupportedKeys(host.measurementCatalog(w.id))
+
     /** Every state topic [w] has an entity for, with or without a value now. */
     private fun stateTopics(w: PairedWatch, catalog: List<SettingInfo>): Set<String> =
-        Entities.valuesFor(w.capabilities, config.shareHealth).map { topics.state(w.id, it.obj) }.toSet() +
+        Entities.valuesFor(w.capabilities, config.shareHealth, unsupported(w)).map { topics.state(w.id, it.obj) }.toSet() +
             catalog.map { topics.settingState(w.id, it.key) }
 
     /**
@@ -265,7 +268,7 @@ class Bridge(
     internal fun states(w: PairedWatch, values: WatchValues, catalog: List<SettingInfo>): Map<String, String> {
         val out = LinkedHashMap<String, String>()
         val types = host.valueCatalog().associate { it.key to it.type }
-        for (e in Entities.valuesFor(w.capabilities, config.shareHealth)) {
+        for (e in Entities.valuesFor(w.capabilities, config.shareHealth, unsupported(w))) {
             val v: Any? = if (e.key == "watch.connected") connectedNow[w.id] ?: w.connected else Entities.convert(e, values[e.key], zone(), types[e.key])
             Values.format(v)?.let { out[topics.state(w.id, e.obj)] = it }
         }

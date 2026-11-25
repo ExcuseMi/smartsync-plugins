@@ -150,4 +150,31 @@ class DiscoveryTest {
         b.onConnected()
         assertEquals("80", link.last("smartsync/$gbxNode/state/battery")?.payload)
     }
+
+    private fun floors(supported: Boolean?) = listOf(
+        org.avmedia.smartsync.plugin.api.MeasurementInfo("floors", "Floors", "floors", "day_total", listOf("health.stairs_up", "health.stairs_down"), supported),
+        org.avmedia.smartsync.plugin.api.MeasurementInfo("steps", "Steps", "steps", "day_total", listOf("health.steps_today"), true),
+    )
+
+    @Test fun aMeasurementTheFamilyDoesNotHaveGetsNoEntityAndAnOldOneIsRemoved() {
+        val w = addGbx()
+        val b = bridge()
+        b.onConnected()
+        val p = "homeassistant/sensor/$gbxNode"
+        val stepsBefore = link.configs().getValue("$p/steps_today/config")
+        assertTrue(link.configs().getValue("$p/stairs_up/config").isNotEmpty())
+        host.measurements[w] = floors(false)
+        b.onConnected()
+        assertEquals("floors removed from discovery", "", link.last("$p/stairs_up/config")?.payload)
+        assertEquals("", link.last("$p/stairs_down/config")?.payload)
+        assertEquals("a kept entity stays the same, id included", stepsBefore, link.configs().getValue("$p/steps_today/config"))
+        assertTrue(stepsBefore.contains("\"default_entity_id\":\"sensor.casio_gbx_h5600_steps_today\""))
+    }
+
+    @Test fun unknownSupportKeepsTheEntity() {
+        val w = addGbx()
+        host.measurements[w] = floors(null)
+        bridge().onConnected()
+        assertTrue(link.configs().getValue("homeassistant/sensor/$gbxNode/stairs_up/config").isNotEmpty())
+    }
 }

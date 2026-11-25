@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+- Entities only for the measurements the watch's family has (`PluginHost.measurementCatalog`): a GBX-H5600 gets no
+  floors sensors, and those published before are removed. Unknown support keeps the entity; kept entities keep their ids.
+
 ## 0.1.2
 - Entities keep their last value while the app is online: no sensor expires any more (a sensor with expire_after went
   unavailable on every config change, also after an app update), the states follow a changed config once Home
