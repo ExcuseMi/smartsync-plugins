@@ -62,6 +62,9 @@ interface PluginHost {
     /** The settings [WatchCommand.ChangeSettings] accepts for [watch] (only those its capabilities have), with their allowed values. */
     fun settingCatalog(watch: WatchId): List<SettingInfo>
 
+    /** What [watch]'s family gathers: every measurement with whether it has it, how and when (since 0.1.1; empty from an older host). */
+    fun measurementCatalog(watch: WatchId): List<MeasurementInfo> = emptyList()
+
     /**
      * Stored records of [kind] for [watch] in [range], oldest first. A store that cannot be read, a watch the host never
      * saw or a range over 400 days is a Failed result.

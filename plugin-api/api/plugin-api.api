@@ -278,6 +278,41 @@ public final class org/avmedia/smartsync/plugin/api/HourRecord : org/avmedia/sma
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/avmedia/smartsync/plugin/api/MeasurementInfo {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;Ljava/util/List;Lkotlin/ranges/IntRange;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;Ljava/util/List;Lkotlin/ranges/IntRange;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/util/Set;
+	public final fun component11 ()Ljava/util/List;
+	public final fun component12 ()Lkotlin/ranges/IntRange;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/lang/Boolean;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;Ljava/util/List;Lkotlin/ranges/IntRange;)Lorg/avmedia/smartsync/plugin/api/MeasurementInfo;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/MeasurementInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;Ljava/util/List;Lkotlin/ranges/IntRange;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/MeasurementInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAvailableAfterMinutes ()Lkotlin/ranges/IntRange;
+	public final fun getGathering ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getKind ()Ljava/lang/String;
+	public final fun getRequiredSettings ()Ljava/util/Set;
+	public final fun getRequirements ()Ljava/util/List;
+	public final fun getSteps ()Ljava/util/List;
+	public final fun getSupported ()Ljava/lang/Boolean;
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun getUnit ()Ljava/lang/String;
+	public final fun getValueKeys ()Ljava/util/List;
+	public final fun getWhenGathered ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/avmedia/smartsync/plugin/api/NightRecord : org/avmedia/smartsync/plugin/api/HistoryRecord {
 	public static final field $stable I
 	public fun <init> (Ljava/time/LocalDate;Ljava/lang/Integer;Ljava/time/LocalDateTime;Ljava/time/LocalDateTime;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Float;Ljava/util/List;Z)V
@@ -391,6 +426,7 @@ public abstract interface class org/avmedia/smartsync/plugin/api/PluginHost {
 	public abstract fun getContext ()Landroid/content/Context;
 	public abstract fun history (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/DataKind;Lorg/avmedia/smartsync/plugin/api/HistoryRange;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun lastValues (Lorg/avmedia/smartsync/plugin/api/WatchId;)Lorg/avmedia/smartsync/plugin/api/WatchValues;
+	public fun measurementCatalog (Lorg/avmedia/smartsync/plugin/api/WatchId;)Ljava/util/List;
 	public abstract fun missingPermissions ()Ljava/util/Set;
 	public abstract fun notify (Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun notify$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
@@ -407,6 +443,7 @@ public abstract interface class org/avmedia/smartsync/plugin/api/PluginHost {
 
 public final class org/avmedia/smartsync/plugin/api/PluginHost$DefaultImpls {
 	public static synthetic fun command$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchCommand;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static fun measurementCatalog (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;)Ljava/util/List;
 	public static synthetic fun notify$default (Lorg/avmedia/smartsync/plugin/api/PluginHost;Lorg/avmedia/smartsync/plugin/api/WatchId;Lorg/avmedia/smartsync/plugin/api/WatchNotification;Lorg/avmedia/smartsync/plugin/api/Delivery;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
@@ -556,8 +593,8 @@ public final class org/avmedia/smartsync/plugin/api/Redact {
 
 public final class org/avmedia/smartsync/plugin/api/SettingInfo {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;)V
-	public synthetic fun <init> (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Lorg/avmedia/smartsync/plugin/api/SettingType;
 	public final fun component3 ()Ljava/util/List;
@@ -565,15 +602,19 @@ public final class org/avmedia/smartsync/plugin/api/SettingInfo {
 	public final fun component5 ()Ljava/util/Set;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Lorg/avmedia/smartsync/plugin/api/Control;
-	public final fun copy (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;)Lorg/avmedia/smartsync/plugin/api/SettingInfo;
-	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/SettingInfo;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/SettingInfo;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;Ljava/lang/String;Ljava/lang/String;)Lorg/avmedia/smartsync/plugin/api/SettingInfo;
+	public static synthetic fun copy$default (Lorg/avmedia/smartsync/plugin/api/SettingInfo;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/SettingType;Ljava/util/List;Lkotlin/ranges/IntRange;Ljava/util/Set;Ljava/lang/String;Lorg/avmedia/smartsync/plugin/api/Control;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/avmedia/smartsync/plugin/api/SettingInfo;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCategory ()Ljava/lang/String;
 	public final fun getChoices ()Ljava/util/List;
 	public final fun getControl ()Lorg/avmedia/smartsync/plugin/api/Control;
 	public final fun getKey ()Ljava/lang/String;
 	public final fun getLabel ()Ljava/lang/String;
 	public final fun getOnly ()Ljava/util/Set;
 	public final fun getRange ()Lkotlin/ranges/IntRange;
+	public final fun getSection ()Ljava/lang/String;
 	public final fun getType ()Lorg/avmedia/smartsync/plugin/api/SettingType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

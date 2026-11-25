@@ -14,7 +14,7 @@ class ApiSurfaceTest {
     @Test fun theHostHasExactlyTheseCalls() {
         assertEquals(
             sortedSetOf(
-                "command", "connected", "current", "declareNeeds", "getApiVersion", "getAppVersion", "getContext", "history", "lastValues",
+                "command", "connected", "current", "declareNeeds", "getApiVersion", "getAppVersion", "getContext", "history", "lastValues", "measurementCatalog",
                 "missingPermissions", "notify", "requestPermissions", "settingCatalog", "settings", "status", "storage", "valueCatalog", "watchName", "watches",
             ),
             names(PluginHost::class.java),

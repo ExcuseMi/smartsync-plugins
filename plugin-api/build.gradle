@@ -8,7 +8,7 @@ plugins {
 }
 
 // The interface version: also PluginApi.VERSION (PluginApiVersionTest keeps both the same). Tag: plugin-api-v<version>.
-version = '0.1.0'
+version = '0.1.1'
 group = 'com.github.ExcuseMi.smartsync-plugins'
 
 android {

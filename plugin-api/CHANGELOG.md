@@ -4,6 +4,11 @@ Coordinates: `com.github.ExcuseMi.smartsync-plugins:plugin-api:plugin-api-v<vers
 Until 1.0 a new patch only adds and a new minor may break; a host runs a plugin of its own minor whose patch is not
 newer than its own. What may be added: README "What may change in a compatible release". See `PluginApi.compatible`.
 
+## 0.1.1
+- `PluginHost.measurementCatalog(watch)`: the watch family's measurements (`MeasurementInfo`: id, title, unit, kind,
+  value keys, supported yes/no/unknown, gathering, when, requirements, steps to start it on the watch, delay until
+  available). Additive; a host of 0.1.0 has the default (empty).
+
 ## 0.1.0
 - `WatchPlugin`: id, name, summary, version, apiVersion, access (`PluginAccess`: reads, controls, sendsTo, stores,
   requires, uses, androidPermissions), icon (`PluginIcon`), activate, deactivate, onEvent, ui, permissionIntent,

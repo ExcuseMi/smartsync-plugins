@@ -10,7 +10,7 @@ package org.avmedia.smartsync.plugin.api
  * plugin of its major whose minor is not newer than its own.
  */
 object PluginApi {
-    const val VERSION = "0.1.0"
+    const val VERSION = "0.1.1"
 
     /** Major, minor and patch of [version] ("0.1" gives 0, 1, 0); null for a version that is not "major.minor[.patch]". */
     fun parse(version: String): Triple<Int, Int, Int>? {
